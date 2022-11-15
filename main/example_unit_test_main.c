@@ -10,7 +10,10 @@
 #include <stdio.h>
 #include "esp_system.h"
 #include "testable.h"
-
+#include "esp_wifi.h"
+#include "driver/adc.h"
+#include "ssd1306.h"
+#include "u8g2_esp32_hal.h"
 /* This application has a test subproject in 'test' directory, all the
  * interesting things happen there. See ../test/main/example_idf_test_runner_test.c
  * and the makefiles in ../test/ directory.
