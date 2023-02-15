@@ -1,8 +1,8 @@
 {
     "project_name":       "bootloader",
     "project_path":       "/home/iainbarkley/esp/esp-idf/components/bootloader/subproject",
-    "build_dir":          "/home/iainbarkley/esp/esp-idf/examples/system/unit_test/test/build/bootloader",
-    "config_file":        "/home/iainbarkley/esp/esp-idf/examples/system/unit_test/test/sdkconfig",
+    "build_dir":          "/home/iainbarkley/hygienie_project/test/build/bootloader",
+    "config_file":        "/home/iainbarkley/hygienie_project/test/sdkconfig",
     "config_defaults":    "",
     "app_elf":            "bootloader.elf",
     "app_bin":            "bootloader.bin",

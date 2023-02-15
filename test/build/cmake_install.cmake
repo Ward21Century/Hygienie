@@ -1,4 +1,4 @@
-# Install script for directory: /home/iainbarkley/esp/esp-idf/examples/system/unit_test/test
+# Install script for directory: /home/iainbarkley/hygienie_project/test
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/iainbarkley/esp/esp-idf/examples/system/unit_test/test/build/esp-idf/cmake_install.cmake")
+  include("/home/iainbarkley/hygienie_project/test/build/esp-idf/cmake_install.cmake")
 
 endif()
 
@@ -51,5 +51,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/iainbarkley/esp/esp-idf/examples/system/unit_test/test/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/iainbarkley/hygienie_project/test/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

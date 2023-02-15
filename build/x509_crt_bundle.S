@@ -1,4 +1,4 @@
-/* * Data converted from /home/iainbarkley/second_esp32_project/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from /home/iainbarkley/hygienie_project/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded

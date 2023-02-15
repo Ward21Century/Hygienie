@@ -1,4 +1,4 @@
-# Install script for directory: /home/iainbarkley/esp/esp-idf/examples/system/unit_test/test/main
+# Install script for directory: /home/iainbarkley/hygienie_project/test/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

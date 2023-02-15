@@ -1,4 +1,4 @@
-# Install script for directory: /home/iainbarkley/second_esp32_project/components/testable
+# Install script for directory: /home/iainbarkley/hygienie_project/components/testable
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
