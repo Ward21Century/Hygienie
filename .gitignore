@@ -1,0 +1,7 @@
+build/
+main/build/
+test/build
+*.log
+*.o
+*.s
+*.d
