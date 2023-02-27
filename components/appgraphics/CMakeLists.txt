@@ -1,4 +1,4 @@
-idf_component_register(SRCS "./src"
-INCLUDE_DIRS "."
-REQUIRES u8g2)
+idf_component_register(SRCS "src/AppGraphics.c"
+INCLUDE_DIRS "include"
+REQUIRES u8g2 u8g2-hal-esp-idf)
 

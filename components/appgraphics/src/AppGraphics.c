@@ -3,10 +3,8 @@
 #include <stdlib.h>
 
 
-#define PIN_SDA 21
-#define PIN_SCL 22
+static u8g2_t u8g2;
 
-static  u8g2_t u8g2;
 void AppGraphicsInitDisplay() {
 
     u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
@@ -20,14 +18,27 @@ void AppGraphicsInitDisplay() {
       u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
     u8x8_SetI2CAddress(&u8g2.u8x8, 0x78);
     u8g2_InitDisplay(&u8g2);  // send init sequence to the display, display is in
+  return;
+}
 
-
+void AppGraphicsAnimationCycle() {
+    AppGraphicsInitDisplay();
+    AppGraphicsWakeUpDisplay();
+    AppGraphicsPrintDroplet();
+    AppGraphicsClearBuffer();
+    AppGraphicsPrintOnOled(-1, -1);
+    AppGraphicsClearBuffer();
+    AppGraphicsPrintOnOled(checkmark_icon, 70);
+    AppGraphicsClearBuffer();
+    AppGraphicsCloseDisplay();
+    return;
 }
 
 void AppGraphicsPrintDroplet() {
    for (int i=0; i<100; i+=5){
        AppGraphicsPrintOnOled(0x0098, i+29);
     }
+   return;
 }
 
 void AppGraphicsPrintOnOled(int text, int height) {
@@ -45,6 +56,7 @@ void AppGraphicsPrintOnOled(int text, int height) {
    }
    u8g2_SendBuffer(&u8g2);
    u8g2_ClearBuffer(&u8g2);
+   return;
  }
 
 void AppGraphicsHandleText(int text) {
@@ -52,22 +64,28 @@ void AppGraphicsHandleText(int text) {
     int mod = (rand() % 10) + 1;
     text = 0x0030 + mod;
     u8g2_DrawGlyph(&u8g2, 8, 60, text);
+    return;
 }
 
 void AppGraphicsHandleGraphics(int height) {
     char string[20];
     u8g2_SetFont(&u8g2, u8g2_font_logisoso16_tr);
     u8g2_DrawStr(&u8g2, 1, 60, string);
+    return;
 }
 
 void AppGraphicsWakeUpDisplay() {
     u8g2_SetPowerSave(&u8g2, 0);  // wake up display
+    return;
 }
 
 void AppGraphicsCloseDisplay() {
     u8g2_SetPowerSave(&u8g2, 1); // put display to sleep
+    return;
 }
 
 void AppGraphicsClearBuffer() {
     u8g2_ClearBuffer(&u8g2);
+    return;
 }
+

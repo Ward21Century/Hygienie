@@ -8,7 +8,14 @@
 // SCL - GPIO22
 #define PIN_SCL 22
 
+#define network_icon 0x0119
+#define upload_icon 0x008f
+#define checkmark_icon 0x0073
+#define star_icon 0x0102
+
 void AppGraphicsInitDisplay(void);
+
+void AppGraphicsAnimationCycle(void);
 
 void AppGraphicsPrintDroplet(void);
 

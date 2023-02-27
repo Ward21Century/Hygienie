@@ -1,24 +1,26 @@
 #include <stdio.h>
-#include "appmqtt.h"
-#include "json.h"
+#include "cJSON.h"
 #include "driver/rtc_io.h"
 #include "soc/rtc.h"
 #include "appdata.h"
 #include "time.h"
+#include "mqtt_client.h"
 
 
 void AppMqttInit(void);
-
-void AppMqttPublish(void);
 
 void AppMqttDestory(void);
 
 void AppMqttCreateJson(void);
 
-void AddMqttAddTime(time_t time);
+void AppMqttAddTime(void);
 
-void AppMqttDestoryJson(cJson *root);
+int AppMqttGetNumoffLineReadingCount(void);
+
+void AppMqttDestroyJson(cJSON *root);
 
 void AppMqttPublish(char *json_str);
 
 void AppMqttSetOfflineReadingCount(int offlineReadingCount);
+
+void AppMqttSendData(void);

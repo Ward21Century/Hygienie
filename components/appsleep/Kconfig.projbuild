@@ -1,4 +1,4 @@
-menu "Example Configuration"
+menu "Sleep Configuration"
 
     config EXAMPLE_TOUCH_WAKEUP
         bool "Enable touch wake up"
