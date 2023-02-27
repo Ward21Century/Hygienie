@@ -19,8 +19,6 @@ TEST_CASE("Test Display Init", "[appgraphics]")
 {
     AppGraphicsInitDisplay();
     AppGraphicsWakeUpDisplay();
-    AppGraphicsPrintDroplet();
-
     AppGraphicsClearBuffer();
     AppGraphicsCloseDisplay();
     TEST_ASSERT_EQUAL(0, 0);

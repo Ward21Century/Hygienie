@@ -71,7 +71,6 @@ void AppSleepDeepSleepTimerInit() {
     wakeup_time_sec = 600;
 #endif
 
-    wakeup_time_sec = 10;
     printf("Enabling timer wakeup, %ds\n", wakeup_time_sec);
     esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000);
 }
