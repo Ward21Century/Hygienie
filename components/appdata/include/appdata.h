@@ -18,6 +18,6 @@ struct Sanitizer_Data {
     int max_offline_readings;
     int bootCount;
     unsigned int offlineReadingCount;
-    struct tm * readings_temp[15];
+    struct tm  readings_temp[15];
 };
 

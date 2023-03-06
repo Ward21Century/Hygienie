@@ -12,6 +12,11 @@
 #include "testable.h"
 #include "esp_wifi.h"
 #include "driver/adc.h"
+#include "AppGraphics.h"
+#include "appmqtt.h"
+#include "AppSleep.h"
+#include "appwifi.h"
+
 #include "ssd1306.h"
 #include "u8g2_esp32_hal.h"
 /* This application has a test subproject in 'test' directory, all the
@@ -22,22 +27,22 @@
  * of a project.
  */
 
-void app_main(void)
-{
-    const int count = 32;
-    const int max = 100;
+void app_main() {
 
-    printf("In main application. Collecting %d random numbers from 1 to %d:\n", count, max);
-    int *numbers = calloc(count, sizeof(numbers[0]));
-    for (int i = 0; i < count; ++i) {
-        numbers[i] = 1 + esp_random() % (max - 1);
-        printf("%4d ", numbers[i]);
-        if ((i + 1) % 10 == 0) {
-            printf("\n");
-        }
+    AppSleepWakeUpFromDeepSleep();
+    AppGraphicsAnimationCycle();
+    AppMqttAddTime();
+    if (AppMqttGetNumoffLineReadingCount() < MAX_OFFLINE_READINGS-1) {
+        printf("Number of readings until next transmission:\r\n");
+        int num_offline_remaining = MAX_OFFLINE_READINGS - AppMqttGetNumoffLineReadingCount();
+        printf("%d\r\n", num_offline_remaining);
     }
-
-    int mean = testable_mean(numbers, count);
-    printf("\nMean: %d\n", mean);
-    free(numbers);
+    else {
+        AppWifiStart();
+        AppMqttSendData();
+        AppWifiDisconnect();
+    }
+    AppSleepInit();
+    AppSleepGoToDeepSleep();
 }
+
