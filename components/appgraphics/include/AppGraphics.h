@@ -2,11 +2,16 @@
 #include "u8g2_esp32_hal.h"
 #include <driver/gpio.h>
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 // SDA - GPIO21
 #define PIN_SDA 21
 
 // SCL - GPIO22
 #define PIN_SCL 22
+
+#define GRAPHICS_DELAY_MS CONFIG_GRAPHICS_DELAY_MS
 
 #define network_icon 0x0119
 #define upload_icon 0x008f

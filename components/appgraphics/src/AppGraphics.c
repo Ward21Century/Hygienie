@@ -28,6 +28,7 @@ void AppGraphicsAnimationCycle() {
     AppGraphicsClearBuffer();
     AppGraphicsPrintOnOled(-1, -1);
     AppGraphicsClearBuffer();
+    vTaskDelay(GRAPHICS_DELAY_MS/portTICK_PERIOD_MS);
     AppGraphicsPrintOnOled(checkmark_icon, 70);
     AppGraphicsClearBuffer();
     AppGraphicsCloseDisplay();

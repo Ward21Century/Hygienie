@@ -1,0 +1,9 @@
+menu "Delay between Animation"
+
+  config  GRAPHICS_DELAY_MS
+      int "Delay between animations"
+      range 10 3600000
+      default 1000
+      help
+          Defines the Delay between different animations
+endmenu
