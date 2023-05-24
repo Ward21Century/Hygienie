@@ -2,19 +2,22 @@
 #include <rom/ets_sys.h>
 #include <stdlib.h>
 
+#define RST_PIN 25
 
 static u8g2_t u8g2;
 
 void AppGraphicsInitDisplay() {
 
     u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
-    u8g2_esp32_hal.sda = PIN_SDA;
-    u8g2_esp32_hal.scl = PIN_SCL;
+    u8g2_esp32_hal.bus.i2c.sda = PIN_SDA;
+    u8g2_esp32_hal.bus.i2c.scl = PIN_SCL;
+    u8g2_esp32_hal.reset = RST_PIN;
     u8g2_esp32_hal_init(u8g2_esp32_hal);
+//    u8g2_Setup_ssd1305_i2c_128x32_noname_f(&u8g2, U8G2_R1, u8g2_esp32_i2c_byte_cb, u8g2_esp32_gpio_and_delay_cb);
     u8g2_Setup_ssd1306_i2c_128x32_univision_f(
       &u8g2, U8G2_R1,
-      // u8x8_byte_sw_i2c,
-      u8g2_esp32_i2c_byte_cb,
+      u8x8_byte_sw_i2c,
+//      u8g2_esp32_i2c_byte_cb,
       u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
     u8x8_SetI2CAddress(&u8g2.u8x8, 0x78);
     u8g2_InitDisplay(&u8g2);  // send init sequence to the display, display is in
@@ -24,6 +27,7 @@ void AppGraphicsInitDisplay() {
 void AppGraphicsAnimationCycle() {
     AppGraphicsInitDisplay();
     AppGraphicsWakeUpDisplay();
+    u8g2_DrawBox(&u8g2, 10, 20, 20, 30);
     AppGraphicsPrintDroplet();
     AppGraphicsClearBuffer();
     AppGraphicsPrintOnOled(-1, -1);
@@ -53,7 +57,7 @@ void AppGraphicsPrintOnOled(int text, int height) {
 
     else {
         u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_2x_t);
-        u8g2_DrawGlyph(&u8g2, 8, height,text);
+        u8g2_DrawGlyph(&u8g2, 20, height, text);
    }
    u8g2_SendBuffer(&u8g2);
    u8g2_ClearBuffer(&u8g2);
@@ -64,7 +68,7 @@ void AppGraphicsHandleText(int text) {
     u8g2_SetFont(&u8g2, u8g2_font_streamline_pet_animals_t);
     int mod = (rand() % 10) + 1;
     text = 0x0030 + mod;
-    u8g2_DrawGlyph(&u8g2, 8, 60, text);
+    u8g2_DrawGlyph(&u8g2, 20, 60, text);
     return;
 }
 

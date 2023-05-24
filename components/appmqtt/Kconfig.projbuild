@@ -1,0 +1,36 @@
+menu "MQTT"
+
+    config MQTT_URL
+        string "Application Server Web Address"
+        default "mqtt://hygienieproject.xyz"
+        depends on IDF_TARGET_ESP32 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+        help
+            This is the web address to send the sanitizer data to. Be sure to include mqtt://
+            in front of it.
+
+    config MQTT_PORT
+        int "MQTT PORT"
+        default 1883
+        depends on IDF_TARGET_ESP32
+        help
+            Port over tcp. Default 1883.
+
+    config MQTT_CLIENT_ID
+        string "Client ID of sensor"
+        default arrgh
+        depends on !IDF_TARGET_ESP32C3
+        help
+            The client ID of the sensor.
+
+    config USERNAME
+        string "Username of Device"
+        default arrgh
+        help
+            The client ID of the sensor.
+
+    config PASSWORD
+        string "Password of Device"
+        default plump
+        help
+            The password of the sensor.
+endmenu

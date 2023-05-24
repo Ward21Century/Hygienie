@@ -82,3 +82,8 @@ TEST_CASE("Test Print Star Icon", "[appgraphics]")
     TEST_ASSERT_EQUAL(1, 1);
 }
 
+TEST_CASE("Test AppGraphics Animation Cycle", "[appgraphics]")
+{
+    AppGraphicsAnimationCycle();
+}
+
