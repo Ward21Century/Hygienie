@@ -10,11 +10,11 @@ static RTC_DATA_ATTR struct Sanitizer_Data sanitizer_data = { .pump_initialized 
                                                               .offlineReadingCount = 0};
 
 static const esp_mqtt_client_config_t mqtt_cfg = {
-    .uri = "mqtt://mqtt.eclipseprojects.io",
-//.event_handle = mqtt_event_handler,
+    .uri = CONFIG_MQTT_URL,
+    .username = CONFIG_USERNAME,
+    .password = CONFIG_PASSWORD,
+    //.event_handle = mqtt_event_handler
 };
-
-
 static esp_mqtt_client_handle_t client;
 
 //static double read_battery_level() {
@@ -35,13 +35,13 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     switch ((esp_mqtt_event_id_t)event_id) {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-        msg_id = esp_mqtt_client_subscribe(client, "/topic/qos0", 0);
+        msg_id = esp_mqtt_client_subscribe(client, "v1/devices/me/telemetry", 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
-        msg_id = esp_mqtt_client_subscribe(client, "/topic/qos1", 1);
+        msg_id = esp_mqtt_client_subscribe(client, "v1/devices/me/telemetry", 1);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 
-        msg_id = esp_mqtt_client_unsubscribe(client, "/topic/qos1");
+        msg_id = esp_mqtt_client_unsubscribe(client, "v1/devices/me/telemetry/qos1");
         ESP_LOGI(TAG, "sent unsubscribe successful, msg_id=%d", msg_id);
         break;
     case MQTT_EVENT_DISCONNECTED:
@@ -50,7 +50,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
     case MQTT_EVENT_SUBSCRIBED:
         ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
-        msg_id = esp_mqtt_client_publish(client, "/topic/qos0", "data", 0, 0, 0);
+        msg_id = esp_mqtt_client_publish(client, "v1/devices/me/telemetry", "data", 0, 0, 0);
         ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
         break;
     case MQTT_EVENT_UNSUBSCRIBED:
@@ -128,7 +128,6 @@ void AppMqttAddTime() {
     //strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
    //printf("The current date/time in Calgary is: %s", strftime_buf);
 
-
     struct tm * timeinfo = localtime( &now );
     sanitizer_data.readings_temp[sanitizer_data.offlineReadingCount] = *timeinfo;
     sanitizer_data.offlineReadingCount++;
@@ -148,7 +147,9 @@ void AppMqttDestroyJson(cJSON *root) {
 }
 
 void AppMqttPublish(char *json_str) {
-    esp_mqtt_client_publish(client, "example/topic", json_str, strlen(json_str), 0, 0 );
+    esp_mqtt_client_publish(client, "v1/devices/me/telemetry", json_str, strlen(json_str), 0, 0 );
+
+    vTaskDelay(pdMS_TO_TICKS(700));
     return;
 }
 
@@ -158,6 +159,8 @@ void AppMqttSetOffineReadingCount(int offlineReadingCount) {
 }
 
 void AppMqttSendData(void) {
+    AppMqttNTPinit();
+    AppMqttSyncTime();
     AppMqttInit();
     AppMqttCreateJson();
     AppMqttDestroy();
@@ -176,3 +179,33 @@ void AppMqttAddLocalTimeToJSON(cJSON *array, struct tm timeinfo, cJSON *time) {
    cJSON_AddItemToArray(array, time);
    return;
 }
+
+void AppMqttNTPinit(void) {
+    sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    sntp_setservername(0, NTP_SERVER_1);
+    sntp_setservername(1, NTP_SERVER_2);
+    sntp_init();
+}
+
+void AppMqttSyncTime(void) {
+    time_t now = 0;
+    struct tm timeinfo ={0};
+    int retry = 0;
+    const int retry_count = 10;
+
+    while (timeinfo.tm_year < (2023-1900) && ++retry < retry_count) {
+        ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        time(&now);
+        localtime_r(&now, &timeinfo);
+    }
+
+    if(timeinfo.tm_year < (2023-1900)) {
+        ESP_LOGE(TAG, "Failed to set system time using NTP");
+    }
+    else {
+        ESP_LOGI(TAG, "System time is set using NTP");
+    }
+}
+
+

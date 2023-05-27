@@ -19,11 +19,11 @@ static void calibrate_touch_pad(touch_pad_t pad)
     if (avg < min_reading) {
         printf("Touch pad #%d average reading is too low: %d (expecting at least %d). "
                "Not using for deep sleep wakeup.\n", pad, avg, min_reading);
-        touch_pad_config(pad, 0);
+        touch_pad_config(pad, 1000);
     } else {
-        int threshold = avg - 100;
-        printf("Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, threshold);
-        touch_pad_config(pad, threshold);
+//        int threshold = 1000;
+        printf("Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, avg);
+        touch_pad_config(pad, avg);
     }
 }
 

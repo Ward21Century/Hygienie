@@ -7,7 +7,11 @@
 #include "soc/rtc.h"
 #include "appdata.h"
 #include "time.h"
+#include "lwip/apps/sntp.h"
 #include "mqtt_client.h"
+
+#define NTP_SERVER_1 "pool.ntp.org"
+#define NTP_SERVER_2 "ntp.ubuntu.org"
 
 void AppMqttInit(void);
 
@@ -28,3 +32,7 @@ void AppMqttSetOfflineReadingCount(int offlineReadingCount);
 void AppMqttSendData(void);
 
 void AppMqttAddLocalTimeToJSON(cJSON *array, struct tm timeinfo, cJSON*time);
+
+void AppMqttNTPinit(void);
+
+void AppMqttSyncTime(void);
