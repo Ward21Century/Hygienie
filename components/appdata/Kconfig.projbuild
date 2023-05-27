@@ -1,0 +1,9 @@
+menu "Data Storage"
+
+    config MAX_OFFLINE_READINGS
+        int "The maximum number of offline readings hygienie will take before sending it to network server"
+        default 10
+        depends on IDF_TARGET_ESP32 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+        help
+            This is the number of offline readings the hygienie will store before sending it to network server. After data is sent, the buffer will be cleared.
+endmenu

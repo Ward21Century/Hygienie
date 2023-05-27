@@ -2,7 +2,7 @@
 #include "driver/rtc_io.h"
 #include <time.h>
 
-#define MAX_OFFLINE_READINGS 2
+#define MAX_OFFLINE_READINGS CONFIG_MAX_OFFLINE_READINGS
 #define facility_name "testfacility"
 //const float MAX_BATTERY_VOLTAGE = 4.2; // Max LiPoly voltage of a 3.7 battery is 4.2
 //const float MIN_BATTERY_VOLTAGE = 3.4; // Max LiPoly voltage of a 3.7 battery is 4.2
