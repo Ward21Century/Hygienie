@@ -20,20 +20,30 @@ void app_main(void)
      *
      * UNITY_BEGIN() and UNITY_END() calls tell Unity to print a summary
      * (number of tests executed/failed/ignored) of tests executed between these calls.
-     */
+
     print_banner("Executing one test by its name");
     UNITY_BEGIN();
     unity_run_test_by_name("Mean of an empty array is zero");
     UNITY_END();
 
-    print_banner("Running tests with [mean] tag");
+    print_banner("Executing one test by its name");
     UNITY_BEGIN();
-    unity_run_tests_by_tag("[mean]", false);
+    unity_run_test_by_name("Test print network icon");
+    UNITY_END();
+*/
+//    print_banner("Running tests with [mean] tag");
+//    UNITY_BEGIN();
+//    unity_run_test_by_name("Test AppSleep Touchpad WakeUp");
+//    UNITY_END();
+
+    print_banner("Running tests with [print_droplet] tag");
+    UNITY_BEGIN();
+    unity_run_tests_by_tag("[appgraphics]", true);
     UNITY_END();
 
     print_banner("Running tests without [fails] tag");
     UNITY_BEGIN();
-    unity_run_tests_by_tag("[fails]", true);
+    unity_run_tests_by_tag("[appgraphics]", true);
     UNITY_END();
 
     print_banner("Running all the registered tests");
