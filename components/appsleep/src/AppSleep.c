@@ -23,7 +23,7 @@ static void calibrate_touch_pad(touch_pad_t pad)
     } else {
 //        int threshold = 1000;
         printf("Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, avg);
-        touch_pad_config(pad, avg);
+        touch_pad_config(pad, 1600);
     }
 }
 

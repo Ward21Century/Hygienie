@@ -149,7 +149,7 @@ void AppMqttDestroyJson(cJSON *root) {
 void AppMqttPublish(char *json_str) {
     esp_mqtt_client_publish(client, "v1/devices/me/telemetry", json_str, strlen(json_str), 0, 0 );
 
-    vTaskDelay(pdMS_TO_TICKS(700));
+    vTaskDelay(pdMS_TO_TICKS(500));
     return;
 }
 
