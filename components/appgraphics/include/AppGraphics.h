@@ -1,5 +1,6 @@
 #include <u8g2.h>
 #include "u8g2_esp32_hal.h"
+#include "esp_log.h"
 #include <driver/gpio.h>
 
 #include "freertos/FreeRTOS.h"
