@@ -1,6 +1,4 @@
-# Unit Testing
-
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+# Hygienie Project
 
 This is the refactored code for hygienie-2022 refactored project that uses the esp-idf framework. This means that source code has been refactored into modules, unit-tests have been written for each module and can be run on the esp32 itself for regression testing, and that project values such as wifi network, password, device id, and sleep duration can be entered in a terminal menu.
 
