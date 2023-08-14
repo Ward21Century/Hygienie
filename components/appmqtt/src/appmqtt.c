@@ -13,18 +13,9 @@ static const esp_mqtt_client_config_t mqtt_cfg = {
     .uri = CONFIG_MQTT_URL,
     .username = CONFIG_USERNAME,
     .password = CONFIG_PASSWORD,
-    //.event_handle = mqtt_event_handler
 };
-static esp_mqtt_client_handle_t client;
 
-//static double read_battery_level() {
-//    rawValue = 0;
-//    double voltageLevel = (rawValue / 4095.0) * 2 * 1.1 * 3.3; // calculate voltage level
-//    double batteryFraction = ( voltageLevel - MIN_BATTERY_VOLTAGE ) / ( MAX_BATTERY_VOLTAGE - MIN_BATTERY_VOLTAGE );
-//
-//    return batteryFraction;
-//
-//}
+static esp_mqtt_client_handle_t client;
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
 
@@ -98,8 +89,6 @@ void AppMqttDestroy() {
 void AppMqttCreateJson() {
 
     cJSON *root =cJSON_CreateObject();
-//    double batteryFraction = read_battery_level();
- //   cJSON_AddNumberToObject(root, "Battery_Fraction", batteryFraction);
     cJSON_AddStringToObject(root, "FacilityName", facility_name);
     cJSON *array = cJSON_CreateArray();
     for (int i = 0; i < MAX_OFFLINE_READINGS; i++) {
@@ -116,17 +105,9 @@ void AppMqttCreateJson() {
  }
 
 void AppMqttAddTime() {
-    //time( &raw_time );
     time_t now;
-    //struct tm timeinfo;
     char strftime_buf[64];
     time(&now);
-// Set timezone to China Standard Time
-    //setenv("TZ", "MT", 1);
-    //tzset();
-    //localtime_r(&now, &timeinfo);
-    //strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-   //printf("The current date/time in Calgary is: %s", strftime_buf);
 
     struct tm * timeinfo = localtime( &now );
     sanitizer_data.readings_temp[sanitizer_data.offlineReadingCount] = *timeinfo;

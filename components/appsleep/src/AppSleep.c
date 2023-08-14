@@ -80,7 +80,6 @@ void AppSleepTouchWakeUpInit() {
     touch_pad_set_fsm_mode(TOUCH_FSM_MODE_TIMER);
     touch_pad_set_voltage(TOUCH_HVOLT_2V4, TOUCH_LVOLT_0V5, TOUCH_HVOLT_ATTEN_1V);
 
-//    touch_pad_sleep_channel_set_work_time(1000, TOUCH_PAD_MEASURE_CYCLE_DEFAULT);
     touch_pad_config(TOUCH_PAD_NUM7, TOUCH_THRESH_NO_USE);
     calibrate_touch_pad(TOUCH_PAD_NUM7);
     esp_sleep_enable_touchpad_wakeup();
