@@ -66,7 +66,6 @@ and create the alias:
 alias get_idf='. $HOME/esp/esp-idf/export.sh'# Configure the project
 ```
 For the menu_config:
-Screenshot from 2023-08-14 16-43-36.png
 
 
 For the test project, you can open the project configuration menu (`idf.py menuconfig`) and explore a few options related to Unity under Component Config, Unity unit testing library.
@@ -89,8 +88,24 @@ As explained above, this example contains two projects: application project and 
 See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
 
 
-## Example output
 
+## Unit Testing
+
+Inside the `testable` component, unit tests are added into `test` directory. `test` directory contains source files of the tests and the component makefile (component.mk / CMakeLists.txt).
+
+```
+unit_test
+  - components                              - Components of the application project
+    - testable
+      - include
+      - test                                - Test directory of the component
+        * component.mk / CMakeLists.txt     - Component makefile of tests
+        * test_mean.c                       - Test source file
+      * component.mk / CMakeLists.txt       - Component makefile
+      * mean.c                              - Component source file
+```
+
+When the main application project is compiled, tests are not included. Test project includes the tests by setting `TEST_COMPONENTS` variable in the project makefile.
 ### Application project output
 
 ```
