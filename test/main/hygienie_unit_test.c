@@ -31,10 +31,10 @@ void app_main(void)
     unity_run_test_by_name("Test print network icon");
     UNITY_END();
 */
-//    print_banner("Running tests with [mean] tag");
-//    UNITY_BEGIN();
-//    unity_run_test_by_name("Test AppSleep Touchpad WakeUp");
-//    UNITY_END();
+    print_banner("Running tests with [mean] tag");
+    UNITY_BEGIN();
+    unity_run_test_by_name("Test AppSleep Touchpad WakeUp");
+    UNITY_END();
 
     print_banner("Running tests with [print_droplet] tag");
     UNITY_BEGIN();
