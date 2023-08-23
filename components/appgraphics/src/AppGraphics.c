@@ -14,16 +14,16 @@ void AppGraphicsInitDisplay() {
     u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
     u8g2_esp32_hal.sda = PIN_SDA;
     u8g2_esp32_hal.scl = PIN_SCL;
-    //u8g2_esp32_hal.reset = RST_PIN;
+    u8g2_esp32_hal.reset = RST_PIN;
     u8g2_esp32_hal_init(u8g2_esp32_hal);
     ESP_LOGD(TAG, "AppGraphics has been configured.");
     //TODO: Currently flipping between ssd1305 and ssd1306 driver for the purposes of debugging.
-    //u8g2_Setup_ssd1305_i2c_128x32_noname_f(&u8g2, U8G2_R1, u8x8_byte_sw_i2c, u8g2_esp32_gpio_and_delay_cb);
-    u8g2_Setup_ssd1306_i2c_128x32_univision_f(
-      &u8g2, U8G2_R0,
- //     u8x8_byte_sw_i2c,
-      u8g2_esp32_i2c_byte_cb,
-      u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
+    u8g2_Setup_ssd1305_i2c_128x32_noname_f(&u8g2, U8G2_R0, u8g2_esp32_i2c_byte_cb, u8g2_esp32_gpio_and_delay_cb);
+    //u8g2_Setup_ssd1306_i2c_128x32_univision_f(
+    //  &u8g2, U8G2_R0,
+    //  //u8x8_byte_sw_i2c,
+    // u8g2_esp32_i2c_byte_cb,
+    //  u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
       ESP_LOGI(TAG, "Driver Connected");
     u8x8_SetI2CAddress(&u8g2.u8x8, 0x78);
     u8g2_InitDisplay(&u8g2);  // send init sequence to the display, display is in
