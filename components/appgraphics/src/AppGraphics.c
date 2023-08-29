@@ -19,11 +19,6 @@ void AppGraphicsInitDisplay() {
     ESP_LOGD(TAG, "AppGraphics has been configured.");
     //TODO: Currently flipping between ssd1305 and ssd1306 driver for the purposes of debugging.
     u8g2_Setup_ssd1305_i2c_128x32_noname_f(&u8g2, U8G2_R0, u8g2_esp32_i2c_byte_cb, u8g2_esp32_gpio_and_delay_cb);
-    //u8g2_Setup_ssd1306_i2c_128x32_univision_f(
-    //  &u8g2, U8G2_R0,
-    //  //u8x8_byte_sw_i2c,
-    // u8g2_esp32_i2c_byte_cb,
-    //  u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
       ESP_LOGI(TAG, "Driver Connected");
     u8x8_SetI2CAddress(&u8g2.u8x8, 0x78);
     u8g2_InitDisplay(&u8g2);  // send init sequence to the display, display is in
@@ -33,13 +28,14 @@ void AppGraphicsInitDisplay() {
 void AppGraphicsAnimationCycle() {
     AppGraphicsInitDisplay();
     AppGraphicsWakeUpDisplay();
-    u8g2_DrawBox(&u8g2, 10, 20, 20, 30);
+    u8g2_DrawBox(&u8g2, 20, 80, 20, 30);
     AppGraphicsPrintDroplet();
     AppGraphicsClearBuffer();
     AppGraphicsPrintOnOled(-1, -1);
     AppGraphicsClearBuffer();
     vTaskDelay(GRAPHICS_DELAY_MS/portTICK_PERIOD_MS);
     AppGraphicsPrintOnOled(checkmark_icon, 70);
+    vTaskDelay(GRAPHICS_DELAY_MS/portTICK_PERIOD_MS);
     AppGraphicsClearBuffer();
     AppGraphicsCloseDisplay();
     return;
@@ -63,7 +59,7 @@ void AppGraphicsPrintOnOled(int text, int height) {
 
     else {
         u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_2x_t);
-        u8g2_DrawGlyph(&u8g2, 20, height, text);
+        u8g2_DrawGlyph(&u8g2, 10, height, text);
    }
    u8g2_SendBuffer(&u8g2);
    u8g2_ClearBuffer(&u8g2);
@@ -74,14 +70,14 @@ void AppGraphicsHandleText(int text) {
     u8g2_SetFont(&u8g2, u8g2_font_streamline_pet_animals_t);
     int mod = (rand() % 10) + 1;
     text = 0x0030 + mod;
-    u8g2_DrawGlyph(&u8g2, 20, 60, text);
+    u8g2_DrawGlyph(&u8g2, 10, 60, text);
     return;
 }
 
 void AppGraphicsHandleGraphics(int height) {
     char string[20];
     u8g2_SetFont(&u8g2, u8g2_font_logisoso16_tr);
-    u8g2_DrawStr(&u8g2, 1, 60, string);
+    u8g2_DrawStr(&u8g2, 30, 60, string);
     return;
 }
 
