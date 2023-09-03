@@ -1,4 +1,5 @@
 #include <u8g2.h>
+#include <stdlib.h>
 #include "u8g2_esp32_hal.h"
 #include "esp_log.h"
 #include <driver/gpio.h>
@@ -12,6 +13,8 @@
 // SCL - GPIO22
 #define PIN_SCL 22
 
+// RST - RST_PIN
+#define RST_PIN 25
 #define GRAPHICS_DELAY_MS CONFIG_GRAPHICS_DELAY_MS
 
 #define network_icon 0x0119
@@ -25,11 +28,11 @@ void AppGraphicsAnimationCycle(void);
 
 void AppGraphicsPrintDroplet(void);
 
-void AppGraphicsPrintOnOled(int text, int height);
+void AppGraphicsPrintOnOled(uint32_t text, uint32_t height);
 
-void AppGraphicsHandleText(int text);
+void AppGraphicsHandleText(uint32_t text);
 
-void AppGraphicsHandleGraphics(int text);
+void AppGraphicsHandleGraphics(uint32_t text);
 
 void AppGraphicsWakeUpDisplay(void);
 

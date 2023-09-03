@@ -7,21 +7,20 @@ static struct timeval now;
 
 static void calibrate_touch_pad(touch_pad_t pad)
 {
-    int avg = 0;
+    uint32_t avg = 0;
     const size_t calibration_count = 128;
-    for (int i = 0; i < calibration_count; ++i) {
+    for (uint32_t i = 0; i < calibration_count; ++i) {
         uint16_t val;
         touch_pad_read(pad, &val);
         avg += val;
     }
     avg /= calibration_count;
-    const int min_reading = 300;
+    const uint32_t min_reading = 300;
     if (avg < min_reading) {
         printf("Touch pad #%d average reading is too low: %d (expecting at least %d). "
                "Not using for deep sleep wakeup.\n", pad, avg, min_reading);
         touch_pad_config(pad, 1000);
     } else {
-//        int threshold = 1000;
         printf("Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, avg);
         touch_pad_config(pad, avg);
     }
@@ -42,7 +41,7 @@ void AppSleepWakeUpFromDeepSleep() {
 
 void AppSleepGetWakeUpCause() {
     gettimeofday(&now, NULL);
-    int sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
+    uint32_t sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
 
     switch (esp_sleep_get_wakeup_cause()) {
 
@@ -64,7 +63,7 @@ void AppSleepGetWakeUpCause() {
 
 void AppSleepDeepSleepTimerInit() {
 
-    int wakeup_time_sec;
+    uint32_t wakeup_time_sec;
 #ifdef DEEP_SLEEP_TIMER
     wakeup_time_sec = DEEP_SLEEP_TIMER*60;
 #else

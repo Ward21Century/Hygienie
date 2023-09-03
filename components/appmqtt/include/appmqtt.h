@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_system.h"
@@ -27,7 +28,7 @@ void AppMqttDestroyJson(cJSON *root);
 
 void AppMqttPublish(char *json_str);
 
-void AppMqttSetOfflineReadingCount(int offlineReadingCount);
+void AppMqttSetOfflineReadingCount(uint32_t offlineReadingCount);
 
 void AppMqttSendData(void);
 

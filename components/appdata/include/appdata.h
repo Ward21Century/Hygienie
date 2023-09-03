@@ -1,3 +1,4 @@
+#include "stdlib.h"
 #include "soc/rtc.h"
 #include "driver/rtc_io.h"
 #include <time.h>
@@ -15,9 +16,9 @@
 struct Sanitizer_Data {
     bool pump_initialized;
     char PUMP_ID[25];
-    int max_offline_readings;
-    int bootCount;
-    unsigned int offlineReadingCount;
-    struct tm  readings_temp[15];
+    uint32_t max_offline_readings;
+    uint32_t bootCount;
+    uint32_t offlineReadingCount;
+    struct tm readings_temp[15];
 };
 

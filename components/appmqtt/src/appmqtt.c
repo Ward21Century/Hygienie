@@ -91,7 +91,7 @@ void AppMqttCreateJson() {
     cJSON *root =cJSON_CreateObject();
     cJSON_AddStringToObject(root, "FacilityName", facility_name);
     cJSON *array = cJSON_CreateArray();
-    for (int i = 0; i < MAX_OFFLINE_READINGS; i++) {
+    for (uint32_t i = 0; i < MAX_OFFLINE_READINGS; i++) {
         cJSON *time = cJSON_CreateObject();
         AppMqttAddLocalTimeToJSON(array, sanitizer_data.readings_temp[i], time);
     }
@@ -134,7 +134,7 @@ void AppMqttPublish(char *json_str) {
     return;
 }
 
-void AppMqttSetOffineReadingCount(int offlineReadingCount) {
+void AppMqttSetOffineReadingCount(uint32_t offlineReadingCount) {
     sanitizer_data.offlineReadingCount = offlineReadingCount;
     return;
 }

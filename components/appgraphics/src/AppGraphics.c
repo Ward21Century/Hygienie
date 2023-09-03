@@ -1,6 +1,5 @@
 #include "AppGraphics.h"
 #include <rom/ets_sys.h>
-#include <stdlib.h>
 
 #define RST_PIN 25
 #define I2C_PORT I2C_NUM_0
@@ -19,6 +18,7 @@ void AppGraphicsInitDisplay() {
     ESP_LOGD(TAG, "AppGraphics has been configured.");
     //TODO: Currently flipping between ssd1305 and ssd1306 driver for the purposes of debugging.
     u8g2_Setup_ssd1305_i2c_128x32_noname_f(&u8g2, U8G2_R0, u8g2_esp32_i2c_byte_cb, u8g2_esp32_gpio_and_delay_cb);
+    //  u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
       ESP_LOGI(TAG, "Driver Connected");
     u8x8_SetI2CAddress(&u8g2.u8x8, 0x78);
     u8g2_InitDisplay(&u8g2);  // send init sequence to the display, display is in
@@ -42,13 +42,13 @@ void AppGraphicsAnimationCycle() {
 }
 
 void AppGraphicsPrintDroplet() {
-   for (int i=0; i<100; i+=5){
+   for (uint32_t i=0; i<100; i+=5){
        AppGraphicsPrintOnOled(0x0098, i+29);
     }
    return;
 }
 
-void AppGraphicsPrintOnOled(int text, int height) {
+void AppGraphicsPrintOnOled(uint32_t text, uint32_t height) {
     u8g2_ClearBuffer(&u8g2);
     u8g2_SetDisplayRotation(&u8g2, U8G2_R1);
     if (text == -1)
@@ -66,7 +66,7 @@ void AppGraphicsPrintOnOled(int text, int height) {
    return;
  }
 
-void AppGraphicsHandleText(int text) {
+void AppGraphicsHandleText(uint32_t text) {
     u8g2_SetFont(&u8g2, u8g2_font_streamline_pet_animals_t);
     int mod = (rand() % 10) + 1;
     text = 0x0030 + mod;
@@ -74,7 +74,7 @@ void AppGraphicsHandleText(int text) {
     return;
 }
 
-void AppGraphicsHandleGraphics(int height) {
+void AppGraphicsHandleGraphics(uint32_t height) {
     char string[20];
     u8g2_SetFont(&u8g2, u8g2_font_logisoso16_tr);
     u8g2_DrawStr(&u8g2, 30, 60, string);
