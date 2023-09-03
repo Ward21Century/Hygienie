@@ -1,8 +1,6 @@
 #include "AppGraphics.h"
 #include <rom/ets_sys.h>
 
-#define RST_PIN 25
-#define I2C_PORT I2C_NUM_0
 static const char *TAG = "AppGraphics Application";
 static u8g2_t u8g2;
 
