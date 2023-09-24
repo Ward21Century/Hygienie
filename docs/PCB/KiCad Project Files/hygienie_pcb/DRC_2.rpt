@@ -1,0 +1,28 @@
+** Drc report for C:\Users\IainB\Documents\Hygienie_Porject_PCB\hygienie_pcb\hygienie_pcb.kicad_pcb **
+** Created on 2023-09-15 19:33:50 **
+
+** Found 0 DRC violations **
+
+** Found 0 unconnected pads **
+
+** Found 6 Footprint errors **
+[extra_footprint]: Extra footprint
+    Local override; Severity: warning
+    @(122.5550 mm, 125.7300 mm): Footprint R2
+[extra_footprint]: Extra footprint
+    Local override; Severity: warning
+    @(125.7300 mm, 125.7300 mm): Footprint R1
+[extra_footprint]: Extra footprint
+    Local override; Severity: warning
+    @(131.2000 mm, 129.3900 mm): Footprint U2
+[extra_footprint]: Extra footprint
+    Local override; Severity: warning
+    @(85.7250 mm, 100.3300 mm): Footprint SW1
+[extra_footprint]: Extra footprint
+    Local override; Severity: warning
+    @(109.2200 mm, 101.6000 mm): Footprint U1
+[extra_footprint]: Extra footprint
+    Local override; Severity: warning
+    @(85.7250 mm, 86.3650 mm): Footprint J1
+
+** End of Report **

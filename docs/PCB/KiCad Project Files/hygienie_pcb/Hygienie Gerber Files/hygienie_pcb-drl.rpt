@@ -1,0 +1,25 @@
+Drill report for hygienie_pcb.kicad_pcb
+Created on 2023-09-15 3:18:19 PM
+
+Copper Layer Stackup:
+    =============================================================
+    L1 :  F.Cu                      front
+    L2 :  B.Cu                      back
+
+
+Drill file 'hygienie_pcb-PTH.drl' contains
+    plated through holes:
+    =============================================================
+    T1  0.500mm  0.0197"  (1 hole)
+    T2  1.000mm  0.0394"  (22 holes)
+    T3  1.110mm  0.0437"  (20 holes)
+    T4  1.400mm  0.0551"  (2 holes)
+
+    Total plated holes count 45
+
+
+Drill file 'hygienie_pcb-NPTH.drl' contains
+    unplated through holes:
+    =============================================================
+
+    Total unplated holes count 0
