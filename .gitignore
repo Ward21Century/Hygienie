@@ -1,7 +1,10 @@
-build/
-main/build/
-test/build/
+build/*
+main/build/*
+test/build/*
 *.log
 *.o
 *.s
 *.d
+*.obj
+*.bin
+*.old

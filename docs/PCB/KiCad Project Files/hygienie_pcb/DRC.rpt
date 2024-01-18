@@ -1,0 +1,14 @@
+** Drc report for C:\Users\IainB\Documents\Hygienie_Porject_PCB\hygienie_pcb\hygienie_pcb.kicad_pcb **
+** Created on 2023-09-15 15:19:17 **
+
+** Found 1 DRC violations **
+[clearance]: Clearance violation (netclass 'Data' clearance 0.2000 mm; actual 0.1980 mm)
+    Rule: netclass 'Data'; Severity: error
+    @(120.0150 mm, 102.8700 mm): Track [/SCL] on F.Cu, length 14.3684 mm
+    @(121.9200 mm, 106.0450 mm): Via [/SDA] on F.Cu - B.Cu
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **
