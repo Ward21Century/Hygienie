@@ -13,18 +13,36 @@ static const char *TAG = "App Main";
 
 void app_main() {
 
-    AppSleepWakeUpFromDeepSleep();
-    AppGraphicsAnimationCycle();
+    esp_sleep_wakeup_cause_t wakeupCause = AppSleepGetWakeUpCause();
     AppMqttAddTime();
-    if (AppMqttGetNumoffLineReadingCount() < MAX_OFFLINE_READINGS-1) {
-        uint32_t num_offline_remaining = MAX_OFFLINE_READINGS - AppMqttGetNumoffLineReadingCount();
-        ESP_LOGI(TAG, "Number of readings until next transmission:%d \r\n", num_offline_remaining);
-    }
-    else {
-        AppWifiStart();
-        AppMqttSendData();
-        AppWifiDisconnect();
+    switch (wakeupCause) {
+
+        case ESP_SLEEP_WAKEUP_TIMER:
+            AppSleepLog();
+            if (AppMqttGetNumoffLineReadingCount() > 0 ) {
+                AppWifiStart();
+                AppMqttSendData();
+                AppWifiDisconnect();
+            }
+            break;
+
+        case ESP_SLEEP_WAKEUP_TOUCHPAD:
+            ESP_LOGI(TAG, "Wake up from touch on pad %d\n", esp_sleep_get_touchpad_wakeup_status());
+            AppGraphicsAnimationCycle();
+            if (AppMqttGetNumoffLineReadingCount() >= MAX_OFFLINE_READINGS-1) {
+                AppWifiStart();
+                AppMqttSendData();
+                AppWifiDisconnect();
+            }
+            break;
+
+        case ESP_SLEEP_WAKEUP_UNDEFINED:
+            ESP_LOGI(TAG, "Not a deep sleep or a touch wake_up\n");
+            break;
+        default:
+            ESP_LOGI(TAG, "ERROR with wake up cause\n");
     }
     AppSleepInit();
     AppSleepGoToDeepSleep();
 }
+
