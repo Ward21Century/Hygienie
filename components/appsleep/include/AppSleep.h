@@ -5,9 +5,13 @@ void AppSleepInit(void);
 
 void AppSleepGoToDeepSleep(void);
 
-void AppSleepWakeUpFromDeepSleep(void);
+esp_sleep_wakeup_cause_t AppSleepWakeUpFromDeepSleep(void);
 
-void AppSleepGetWakeUpCause(void);
+void AppSleepLog(void);
+
+esp_sleep_wakeup_cause_t AppSleepGetWakeUpCause(void);
+
+void AppMqttEraseTimeStamps(void);
 
 void AppSleepDeepSleepTimerInit(void);
 

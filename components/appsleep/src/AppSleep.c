@@ -18,12 +18,12 @@ static void calibrate_touch_pad(touch_pad_t pad)
     avg /= calibration_count;
     const uint32_t min_reading = 100;
     if (avg < min_reading) {
-        ESP_LOGD(TAG, "Touch pad #%d average reading is too low: %d (expecting at least %d). "
+        ESP_LOGI(TAG, "Touch pad #%d average reading is too low: %d (expecting at least %d). "
                "Not using for deep sleep wakeup.\n", pad, avg, min_reading);
-        touch_pad_config(pad, 1000);
+        touch_pad_config(pad, 500);
     } else {
-        ESP_LOGD(TAG, "Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, 1000);
-        touch_pad_config(pad, 1000);
+        ESP_LOGI(TAG, "Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, 500);
+        touch_pad_config(pad, 500);
     }
 }
 
@@ -36,42 +36,33 @@ void AppSleepGoToDeepSleep() {
     esp_deep_sleep_start();
 }
 
-void AppSleepWakeUpFromDeepSleep() {
-   AppSleepGetWakeUpCause();
+esp_sleep_wakeup_cause_t AppSleepWakeUpFromDeepSleep() {
+   return AppSleepGetWakeUpCause();
 }
 
-void AppSleepGetWakeUpCause() {
+void AppSleepLog() {
     gettimeofday(&now, NULL);
     uint32_t sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
+    ESP_LOGD(TAG, "Wake up from timer. Time spent in deep sleep: %dms\n", sleep_time_ms);
+}
 
-    switch (esp_sleep_get_wakeup_cause()) {
-
-        case ESP_SLEEP_WAKEUP_TIMER: {
-            ESP_LOGD(TAG, "Wake up from timer. Time spent in deep sleep: %dms\n", sleep_time_ms);
-            break;
-        }
-
-        case ESP_SLEEP_WAKEUP_TOUCHPAD: {
-            ESP_LOGD(TAG, "Wake up from touch on pad %d\n", esp_sleep_get_touchpad_wakeup_status());
-            break;
-        }
-
-        case ESP_SLEEP_WAKEUP_UNDEFINED:
-        default:
-            ESP_LOGD(TAG, "Not a deep sleep reset\n");
-    }
+esp_sleep_wakeup_cause_t AppSleepGetWakeUpCause() {
+     return esp_sleep_get_wakeup_cause();
 }
 
 void AppSleepDeepSleepTimerInit() {
-
     uint32_t wakeup_time_sec;
-#ifdef DEEP_SLEEP_TIMER
     wakeup_time_sec = DEEP_SLEEP_TIMER*60;
-#else
-    wakeup_time_sec = 600;
-#endif
+        // If the time is within allowed hours, handle accordingly
+        // For example, you might want to delay sleep or perform some data transmission here
+        // Proceed to deep sleep
+    #ifdef DEEP_SLEEP_TIMER
+        wakeup_time_sec = DEEP_SLEEP_TIMER*60;
+    #else
+        wakeup_time_sec = 600;
+    #endif
 
-    ESP_LOGD(TAG, "Enabling timer wakeup, %ds\n", wakeup_time_sec);
+    ESP_LOGI(TAG, "Enabling timer wakeup, %ds\n", wakeup_time_sec);
     esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000);
 }
 
