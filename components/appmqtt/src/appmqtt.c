@@ -1,19 +1,22 @@
 #include "appmqtt.h"
 #include <string.h>
 
-static const char *TAG = "mqtt application";
+static const char *TAG = "mqtt";
 
 static RTC_DATA_ATTR struct Sanitizer_Data sanitizer_data = { .pump_initialized = false,
-                                                              .PUMP_ID = "test_id",
+                                                              .facility_name = FACILITY_NAME,
+                                                              .device_id = DEVICE_ID,
                                                               .max_offline_readings = MAX_OFFLINE_READINGS,
                                                               .bootCount = 10,
                                                               .offlineReadingCount = 0};
 
 static const esp_mqtt_client_config_t mqtt_cfg = {
-    .uri = CONFIG_MQTT_URL,
-    .username = CONFIG_USERNAME,
-    .password = CONFIG_PASSWORD,
+    .uri = MQTT_IP_ADDRESS_WITH_PORT,
+    .username = MQTT_USERNAME,
+    .client_id = MQTT_CLIENT_ID,
+    .password = MQTT_PASSWORD
 };
+
 
 static esp_mqtt_client_handle_t client;
 
@@ -89,11 +92,13 @@ void AppMqttDestroy() {
 void AppMqttCreateJson() {
 
     cJSON *root =cJSON_CreateObject();
-    cJSON_AddStringToObject(root, "FacilityName", facility_name);
+    cJSON_AddStringToObject(root, "FACILITY_NAME", sanitizer_data.facility_name);
+    cJSON_AddStringToObject(root, "DEVICE_ID", sanitizer_data.device_id);
     cJSON *array = cJSON_CreateArray();
-    for (uint32_t i = 0; i < MAX_OFFLINE_READINGS; i++) {
+    for (uint32_t i = 0; i < AppMqttGetNumoffLineReadingCount(); i++) {
         cJSON *time = cJSON_CreateObject();
-        AppMqttAddLocalTimeToJSON(array, sanitizer_data.readings_temp[i], time);
+        //AppMqttAddLocalTimeToJSON(array, sanitizer_data.readings_temp[i], time);
+        cJSON_AddItemToObject(array, "Time Recorded:", cJSON_CreateNumber((double)sanitizer_data.time_stamp_seconds[i]));
     }
     cJSON_AddItemToObject(root, "TimeStamps", array);
     char *json_str = cJSON_Print(root);
@@ -104,23 +109,36 @@ void AppMqttCreateJson() {
     return;
  }
 
-void AppMqttAddTime() {
+void AppMqttAddTime(void) {
     time_t now;
     char strftime_buf[64];
     time(&now);
-
     struct tm * timeinfo = localtime( &now );
+    sanitizer_data.time_stamp_seconds[sanitizer_data.offlineReadingCount] = localtime(&now);
     sanitizer_data.readings_temp[sanitizer_data.offlineReadingCount] = *timeinfo;
-    sanitizer_data.offlineReadingCount++;
+    AppMqttIncrementOfflineReadingCount();
     if (sanitizer_data.offlineReadingCount >= 10)
         sanitizer_data.offlineReadingCount = 0;
     return;
 }
 
-int AppMqttGetNumoffLineReadingCount() {
+void AppMqttClearTimeStamps(void) {
+    memset(sanitizer_data.readings_temp, 0, sizeof(sanitizer_data.readings_temp));
+}
+
+void AppMqttIncrementOfflineReadingCount(void) {
+    sanitizer_data.offlineReadingCount++;
+}
+
+int AppMqttGetNumoffLineReadingCount(void) {
     int off_line_count = sanitizer_data.offlineReadingCount;
     return off_line_count;
 }
+
+uint32_t AppmqttGetMaxOfflineReadings(void) {
+   return sanitizer_data.max_offline_readings;
+}
+
 
 void AppMqttDestroyJson(cJSON *root) {
     cJSON_Delete(root);
@@ -144,10 +162,12 @@ void AppMqttSendData(void) {
     AppMqttSyncTime();
     AppMqttInit();
     AppMqttCreateJson();
+    AppMqttClearTimeStamps();
     AppMqttDestroy();
 }
 
 void AppMqttAddLocalTimeToJSON(cJSON *array, struct tm timeinfo, cJSON *time) {
+
    cJSON_AddNumberToObject(time, "tm_sec", timeinfo.tm_sec);
    cJSON_AddNumberToObject(time, "tm_min", timeinfo.tm_min);
    cJSON_AddNumberToObject(time, "tm_hour", timeinfo.tm_hour);
