@@ -16,14 +16,14 @@ static void calibrate_touch_pad(touch_pad_t pad)
         avg += val;
     }
     avg /= calibration_count;
-    const uint32_t min_reading = 100;
+    const uint32_t min_reading = 1500;
     if (avg < min_reading) {
         ESP_LOGI(TAG, "Touch pad #%d average reading is too low: %d (expecting at least %d). "
-               "Not using for deep sleep wakeup.\n", pad, avg, min_reading);
-        touch_pad_config(pad, 500);
+               "using %d for deep sleep wakeup.\n", pad, avg, min_reading, min_reading);
+        touch_pad_config(pad, min_reading);
     } else {
-        ESP_LOGI(TAG, "Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, 500);
-        touch_pad_config(pad, 500);
+        ESP_LOGI(TAG, "Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, avg);
+        touch_pad_config(pad, avg);
     }
 }
 

@@ -25,6 +25,8 @@ void AppMqttAddTime(void);
 
 void AppMqttIncrementOfflineReadingCount(void);
 
+void AppMqttResetOfflineReadingCount(void);
+
 void AppMqttClearTimeStamps(void);
 
 int AppMqttGetNumoffLineReadingCount(void);
@@ -34,6 +36,8 @@ void AppMqttDestroyJson(cJSON *root);
 void AppMqttPublish(char *json_str);
 
 void AppMqttSetOfflineReadingCount(uint32_t offlineReadingCount);
+
+void AppMqttInitNTPAndSyncTime(void);
 
 void AppMqttSendData(void);
 

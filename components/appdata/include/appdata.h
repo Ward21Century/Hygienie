@@ -14,8 +14,8 @@
 
 struct Sanitizer_Data {
     bool pump_initialized;
+    char device_name[32];
     char device_id[25];
-    char facility_name[32];
     uint32_t max_offline_readings;
     uint32_t bootCount;
     uint32_t offlineReadingCount;

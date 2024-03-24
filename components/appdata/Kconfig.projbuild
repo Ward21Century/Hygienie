@@ -7,12 +7,12 @@ menu "Data Storage"
         help
             This is the number of offline readings the hygienie will store before sending it to network server. After data is sent, the buffer will be cleared.
 
-    config FACILITY_NAME
-        string "The name of the facility that the sensor is deployed in."
-        default "Alberta Children's Hospital"
+    config DEVICE_NAME
+        string "The name of the device."
+        default "Nursing Station"
         depends on IDF_TARGET_ESP32 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
         help
-            This is the name of the facility that the device will be deployed in.
+            This is the name of the device.
 
     config DEVICE_ID
         string "The id of the device. This should be related to the device's location."
