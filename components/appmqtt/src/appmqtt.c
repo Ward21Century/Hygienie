@@ -1,10 +1,11 @@
 #include "appmqtt.h"
-#include <string.h>
+#include "time.h"
+#include "sys/time.h"
 
 static const char *TAG = "mqtt";
 
+static RTC_DATA_ATTR struct timeval current_time;
 static RTC_DATA_ATTR time_t now;
-static RTC_DATA_ATTR struct tm *timeinfo; // Pointer to struct tm
 
 static RTC_DATA_ATTR struct Sanitizer_Data sanitizer_data = { .pump_initialized = false,
                                                               .device_name = DEVICE_NAME,
@@ -27,8 +28,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
     esp_mqtt_event_handle_t event = event_data;
-    esp_mqtt_client_handle_t client = event->client;
-    int msg_id;
+    esp_mqtt_client_handle_t client = event->client; int msg_id;
     switch ((esp_mqtt_event_id_t)event_id) {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
@@ -99,13 +99,10 @@ void AppMqttCreateJson() {
     cJSON_AddStringToObject(root, "DEVICE_ID", sanitizer_data.device_id);
     cJSON *array = cJSON_CreateArray();
     for (uint32_t i = 0; i < AppMqttGetNumoffLineReadingCount(); i++) {
-        cJSON *time = cJSON_CreateObject();
-  //      AppMqttAddLocalTimeToJSON(array, sanitizer_data.readings_temp[i], time);
-        cJSON_AddItemToObject(array, "Time Recorded:", cJSON_CreateNumber((double)sanitizer_data.time_stamp_seconds[i]));
+        cJSON_AddItemToObject(array, "Time Recorded:", cJSON_CreateNumber((uint32_t)sanitizer_data.time_stamp_seconds[i]));
     }
     cJSON_AddItemToObject(root, "TimeStamps", array);
     char *json_str = cJSON_Print(root);
-    printf("%s\n", json_str);
     AppMqttPublish(json_str);
     AppMqttDestroyJson(root);
     free(json_str);
@@ -113,25 +110,18 @@ void AppMqttCreateJson() {
  }
 
 void AppMqttAddTime(void) {
+    gettimeofday(&current_time, NULL); // Get the current time
 
     // Get the current time as a Unix timestamp (seconds since the Epoch)
     time(&now);
-    // Convert the timestamp to local time (tm structure)
-    timeinfo = localtime(&now);
 
     // Print the current UTC time in seconds
-    printf("Current UTC time in seconds: %ld\n", now);
+    ESP_LOGI(TAG, "Current UTC time in seconds: %ld\n", now);
 
     // Store the UTC timestamp
-    sanitizer_data.time_stamp_seconds[sanitizer_data.offlineReadingCount] = now;
-    printf("Stored timestamp: %ld\n", sanitizer_data.time_stamp_seconds[sanitizer_data.offlineReadingCount]);
+    sanitizer_data.time_stamp_seconds[sanitizer_data.offlineReadingCount] = current_time.tv_sec;
+    ESP_LOGI(TAG, "Stored timestamp: %ld\n", sanitizer_data.time_stamp_seconds[sanitizer_data.offlineReadingCount]);
 
-    // Assuming you want to store the local time representation, you need to copy the structure
-    //if (timeinfo) { // Check pointer validity
-    //    sanitizer_data.readings_temp[sanitizer_data.offlineReadingCount] = *timeinfo; // Dereference pointer to copy structure
-//    } else {
-        // Handle error: localtime returned NULL
- //   }
     // Increment the count of readings
     AppMqttIncrementOfflineReadingCount();
     return;
@@ -149,20 +139,15 @@ void AppMqttIncrementOfflineReadingCount(void) {
 }
 
 void AppMqttResetOfflineReadingCount(void) {
-    if (sanitizer_data.offlineReadingCount >= sanitizer_data.max_offline_readings)
         sanitizer_data.offlineReadingCount = 0;
     return;
 }
 
-int AppMqttGetNumoffLineReadingCount(void) {
-    int off_line_count = sanitizer_data.offlineReadingCount;
+uint8_t AppMqttGetNumoffLineReadingCount(void) {
+    uint8_t off_line_count = sanitizer_data.offlineReadingCount;
+    ESP_LOGI(TAG, "Offline Reading Count. %d", off_line_count);
     return off_line_count;
 }
-
-uint32_t AppmqttGetMaxOfflineReadings(void) {
-   return sanitizer_data.max_offline_readings;
-}
-
 
 void AppMqttDestroyJson(cJSON *root) {
     cJSON_Delete(root);
@@ -219,7 +204,7 @@ void AppMqttSyncTime(void) {
     time_t nowr = 0;
     struct tm timeinfor ={0};
     int retry = 0;
-    const int retry_count = 10;
+    const uint8_t retry_count = 10;
 
     while (timeinfor.tm_year < (2024-1900) && ++retry < retry_count) {
         ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
@@ -228,8 +213,8 @@ void AppMqttSyncTime(void) {
         ESP_LOGE(TAG, "Failed to set system time using NTP");
         char buf[64];
         localtime_r(&nowr, &timeinfor);
-        strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &timeinfo);
-        printf("Current system time is: %s\n", buf);
+        strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &timeinfor);
+        ESP_LOGI(TAG, "Current system time is: %s\n", buf);
     }
 
     if(timeinfor.tm_year < (2024-1900)) {

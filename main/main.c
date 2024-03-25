@@ -21,10 +21,8 @@ void app_main() {
         // It's a good idea to synchronize time after initialization
         AppWifiStart();
         AppMqttInitNTPAndSyncTime();
+        AppWifiDisconnect();
     }
-    AppMqttAddTime();
-    AppMqttSendData();
-    AppWifiDisconnect();
     switch (wakeupCause) {
 
         case ESP_SLEEP_WAKEUP_TIMER:
@@ -32,6 +30,7 @@ void app_main() {
             if (AppMqttGetNumoffLineReadingCount() > 0 ) {
                 AppWifiStart();
                 AppMqttSendData();
+                AppMqttInitNTPAndSyncTime();
                 AppWifiDisconnect();
             }
             break;
@@ -40,9 +39,10 @@ void app_main() {
             ESP_LOGI(TAG, "Wake up from touch on pad %d\n", esp_sleep_get_touchpad_wakeup_status());
             AppMqttAddTime();
             AppGraphicsAnimationCycle();
-            if (AppMqttGetNumoffLineReadingCount() >= MAX_OFFLINE_READINGS-1) {
+            if (AppMqttGetNumoffLineReadingCount() >= MAX_OFFLINE_READINGS) {
                 AppWifiStart();
                 AppMqttSendData();
+                AppMqttInitNTPAndSyncTime();
                 AppWifiDisconnect();
             }
             break;

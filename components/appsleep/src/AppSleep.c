@@ -5,7 +5,6 @@
 
 static struct timeval now;
 static const char *TAG = "Sleep";
-
 static void calibrate_touch_pad(touch_pad_t pad)
 {
     uint32_t avg = 0;
@@ -27,14 +26,20 @@ static void calibrate_touch_pad(touch_pad_t pad)
     }
 }
 
-void AppSleepInit()
-{
+void AppSleepInit() {
     AppSleepDeepSleepTimerInit();
     AppSleepTouchWakeUpInit();
 }
+
 void AppSleepGoToDeepSleep() {
+    AppSleepRecordEnterTime();
     esp_deep_sleep_start();
 }
+
+void AppSleepRecordEnterTime() {
+    gettimeofday(&sleep_enter_time, NULL); // Record current time before sleep
+}
+
 
 esp_sleep_wakeup_cause_t AppSleepWakeUpFromDeepSleep() {
    return AppSleepGetWakeUpCause();

@@ -29,7 +29,7 @@ void AppMqttResetOfflineReadingCount(void);
 
 void AppMqttClearTimeStamps(void);
 
-int AppMqttGetNumoffLineReadingCount(void);
+uint8_t AppMqttGetNumoffLineReadingCount(void);
 
 void AppMqttDestroyJson(cJSON *root);
 
