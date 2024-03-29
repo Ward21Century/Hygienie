@@ -1,12 +1,3 @@
-/* Deep sleep wake up example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -59,6 +50,7 @@
 #ifdef CONFIG_EXAMPLE_ULP_TEMPERATURE_WAKEUP
 #if CONFIG_IDF_TARGET_ESP32
 
+// Adding RTC_DATA_ATTR for sleep enter time for a later time
 static RTC_DATA_ATTR struct timeval sleep_enter_time;
 /*
  * Offset (in 32-bit words) in RTC Slow memory where the data is placed
@@ -68,9 +60,7 @@ static RTC_DATA_ATTR struct timeval sleep_enter_time;
  */
 #define ULP_DATA_OFFSET    0
 
-//_Static_assert(ULP_DATA_OFFSET < CONFIG_ESP32_ULP_COPROC_RESERVE_MEM/4 - 6,
-//       "ULP_DATA_OFFSET is set too high, or CONFIG_ESP32_ULP_COPROC_RESERVE_MEM is not sufficient");
-
+// TODO: Add ULP temperature monitoring program to Appsleep module.
 /**
  * @brief Start ULP temperature monitoring program
  *
@@ -78,7 +68,8 @@ static RTC_DATA_ATTR struct timeval sleep_enter_time;
  * The program monitors on-chip temperature sensor and wakes up the SoC when
  * the temperature goes lower or higher than certain thresholds.
  */
-static void start_ulp_temperature_monitoring(void);
+// TODO: Add ULP temperature monitoring program to Appsleep module. Will comment out until feature is needed.
+//static void start_ulp_temperature_monitoring(void);
 
 /**
  * @brief Utility function which reads data written by ULP program

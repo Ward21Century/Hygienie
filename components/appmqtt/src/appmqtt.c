@@ -1,19 +1,26 @@
 #include "appmqtt.h"
-#include <string.h>
+#include "time.h"
+#include "sys/time.h"
 
-static const char *TAG = "mqtt application";
+static const char *TAG = "mqtt";
+
+static RTC_DATA_ATTR struct timeval current_time;
+static RTC_DATA_ATTR time_t now;
 
 static RTC_DATA_ATTR struct Sanitizer_Data sanitizer_data = { .pump_initialized = false,
-                                                              .PUMP_ID = "test_id",
+                                                              .device_name = DEVICE_NAME,
+                                                              .device_id = DEVICE_ID,
                                                               .max_offline_readings = MAX_OFFLINE_READINGS,
                                                               .bootCount = 10,
                                                               .offlineReadingCount = 0};
 
 static const esp_mqtt_client_config_t mqtt_cfg = {
-    .uri = CONFIG_MQTT_URL,
-    .username = CONFIG_USERNAME,
-    .password = CONFIG_PASSWORD,
+    .uri = MQTT_IP_ADDRESS_WITH_PORT,
+    .username = MQTT_USERNAME,
+    .client_id = MQTT_CLIENT_ID,
+    .password = MQTT_PASSWORD
 };
+
 
 static esp_mqtt_client_handle_t client;
 
@@ -21,8 +28,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%d", base, event_id);
     esp_mqtt_event_handle_t event = event_data;
-    esp_mqtt_client_handle_t client = event->client;
-    int msg_id;
+    esp_mqtt_client_handle_t client = event->client; int msg_id;
     switch ((esp_mqtt_event_id_t)event_id) {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
@@ -89,36 +95,57 @@ void AppMqttDestroy() {
 void AppMqttCreateJson() {
 
     cJSON *root =cJSON_CreateObject();
-    cJSON_AddStringToObject(root, "FacilityName", facility_name);
+    cJSON_AddStringToObject(root, "DEVICE_NAME", sanitizer_data.device_name);
+    cJSON_AddStringToObject(root, "DEVICE_ID", sanitizer_data.device_id);
     cJSON *array = cJSON_CreateArray();
-    for (uint32_t i = 0; i < MAX_OFFLINE_READINGS; i++) {
-        cJSON *time = cJSON_CreateObject();
-        AppMqttAddLocalTimeToJSON(array, sanitizer_data.readings_temp[i], time);
+    for (uint32_t i = 0; i < AppMqttGetNumoffLineReadingCount(); i++) {
+        cJSON_AddItemToObject(array, "Time Recorded:", cJSON_CreateNumber((uint32_t)sanitizer_data.time_stamp_seconds[i]));
     }
     cJSON_AddItemToObject(root, "TimeStamps", array);
     char *json_str = cJSON_Print(root);
-    printf("%s\n", json_str);
     AppMqttPublish(json_str);
     AppMqttDestroyJson(root);
     free(json_str);
     return;
  }
 
-void AppMqttAddTime() {
-    time_t now;
-    char strftime_buf[64];
+void AppMqttAddTime(void) {
+    gettimeofday(&current_time, NULL); // Get the current time
+
+    // Get the current time as a Unix timestamp (seconds since the Epoch)
     time(&now);
 
-    struct tm * timeinfo = localtime( &now );
-    sanitizer_data.readings_temp[sanitizer_data.offlineReadingCount] = *timeinfo;
+    // Print the current UTC time in seconds
+    ESP_LOGI(TAG, "Current UTC time in seconds: %ld\n", now);
+
+    // Store the UTC timestamp
+    sanitizer_data.time_stamp_seconds[sanitizer_data.offlineReadingCount] = current_time.tv_sec;
+    ESP_LOGI(TAG, "Stored timestamp: %ld\n", sanitizer_data.time_stamp_seconds[sanitizer_data.offlineReadingCount]);
+
+    // Increment the count of readings
+    AppMqttIncrementOfflineReadingCount();
+    return;
+}
+
+void AppMqttClearTimeStamps(void) {
+    for (int32_t i = 0; i < sanitizer_data.max_offline_readings; i++) {
+         memset(&sanitizer_data.readings_temp[i], 0, sizeof(struct tm));
+         sanitizer_data.time_stamp_seconds[i] = 0;
+    }
+}
+
+void AppMqttIncrementOfflineReadingCount(void) {
     sanitizer_data.offlineReadingCount++;
-    if (sanitizer_data.offlineReadingCount >= 10)
+}
+
+void AppMqttResetOfflineReadingCount(void) {
         sanitizer_data.offlineReadingCount = 0;
     return;
 }
 
-int AppMqttGetNumoffLineReadingCount() {
-    int off_line_count = sanitizer_data.offlineReadingCount;
+uint8_t AppMqttGetNumoffLineReadingCount(void) {
+    uint8_t off_line_count = sanitizer_data.offlineReadingCount;
+    ESP_LOGI(TAG, "Offline Reading Count. %d", off_line_count);
     return off_line_count;
 }
 
@@ -129,7 +156,6 @@ void AppMqttDestroyJson(cJSON *root) {
 
 void AppMqttPublish(char *json_str) {
     esp_mqtt_client_publish(client, "v1/devices/me/telemetry", json_str, strlen(json_str), 0, 0 );
-
     vTaskDelay(pdMS_TO_TICKS(500));
     return;
 }
@@ -139,15 +165,21 @@ void AppMqttSetOffineReadingCount(uint32_t offlineReadingCount) {
     return;
 }
 
-void AppMqttSendData(void) {
+void AppMqttInitNTPAndSyncTime(void) {
     AppMqttNTPinit();
     AppMqttSyncTime();
+}
+
+void AppMqttSendData(void) {
     AppMqttInit();
     AppMqttCreateJson();
+    AppMqttClearTimeStamps();
+    AppMqttResetOfflineReadingCount();
     AppMqttDestroy();
 }
 
 void AppMqttAddLocalTimeToJSON(cJSON *array, struct tm timeinfo, cJSON *time) {
+
    cJSON_AddNumberToObject(time, "tm_sec", timeinfo.tm_sec);
    cJSON_AddNumberToObject(time, "tm_min", timeinfo.tm_min);
    cJSON_AddNumberToObject(time, "tm_hour", timeinfo.tm_hour);
@@ -169,19 +201,23 @@ void AppMqttNTPinit(void) {
 }
 
 void AppMqttSyncTime(void) {
-    time_t now = 0;
-    struct tm timeinfo ={0};
+    time_t nowr = 0;
+    struct tm timeinfor ={0};
     int retry = 0;
-    const int retry_count = 10;
+    const uint8_t retry_count = 10;
 
-    while (timeinfo.tm_year < (2023-1900) && ++retry < retry_count) {
+    while (timeinfor.tm_year < (2024-1900) && ++retry < retry_count) {
         ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
         vTaskDelay(pdMS_TO_TICKS(2000));
-        time(&now);
-        localtime_r(&now, &timeinfo);
+        time(&nowr);
+        ESP_LOGE(TAG, "Failed to set system time using NTP");
+        char buf[64];
+        localtime_r(&nowr, &timeinfor);
+        strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &timeinfor);
+        ESP_LOGI(TAG, "Current system time is: %s\n", buf);
     }
 
-    if(timeinfo.tm_year < (2023-1900)) {
+    if(timeinfor.tm_year < (2024-1900)) {
         ESP_LOGE(TAG, "Failed to set system time using NTP");
     }
     else {

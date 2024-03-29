@@ -1,9 +1,23 @@
 menu "Data Storage"
 
     config MAX_OFFLINE_READINGS
-        int "The maximum number of offline readings hygienie will take before sending it to network server"
+        int "The maximum number of offline readings hygienie will take before sending it to network server."
         default 10
         depends on IDF_TARGET_ESP32 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
         help
             This is the number of offline readings the hygienie will store before sending it to network server. After data is sent, the buffer will be cleared.
+
+    config DEVICE_NAME
+        string "The name of the device."
+        default "Nursing Station"
+        depends on IDF_TARGET_ESP32 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+        help
+            This is the name of the device.
+
+    config DEVICE_ID
+        string "The id of the device. This should be related to the device's location."
+        default "Hospital Foyer"
+        depends on IDF_TARGET_ESP32 || IDF_TARGET_ESP32S2 || IDF_TARGET_ESP32S3
+        help
+            This is the id of the device that pertains to the location in the facility.
 endmenu
