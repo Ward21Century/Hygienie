@@ -18,3 +18,5 @@ void AppMqttEraseTimeStamps(void);
 void AppSleepDeepSleepTimerInit(void);
 
 void AppSleepTouchWakeUpInit(void);
+
+void AppSleepGPIOWakeUpInit(void);
