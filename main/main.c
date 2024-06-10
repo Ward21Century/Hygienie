@@ -5,7 +5,7 @@
 #include "esp_wifi.h"
 #include "driver/adc.h"
 #include "AppGraphics.h"
-#include "appmqtt.h"
+#include "Appmqtt.h"
 #include "AppSleep.h"
 #include "appwifi.h"
 
@@ -26,6 +26,7 @@ void app_main() {
     switch (wakeupCause) {
 
         case ESP_SLEEP_WAKEUP_TIMER:
+            ESP_LOGI(TAG, "Wake up from sleep timer.\r\n");
             AppSleepLog();
             if (AppMqttGetNumoffLineReadingCount() > 0 ) {
                 AppWifiStart();

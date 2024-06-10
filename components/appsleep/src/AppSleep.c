@@ -1,34 +1,22 @@
 #include "AppSleep.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
+#include "esp_sleep.h"
+#include "driver/gpio.h"
+#include "esp_log.h"
 
+#define GPIO_WAKEUP_PIN 27
 
 static struct timeval now;
 static const char *TAG = "Sleep";
-static void calibrate_touch_pad(touch_pad_t pad)
-{
-    uint32_t avg = 0;
-    const size_t calibration_count = 128;
-    for (uint32_t i = 0; i < calibration_count; ++i) {
-        uint16_t val;
-        touch_pad_read(pad, &val);
-        avg += val;
-    }
-    avg /= calibration_count;
-    const uint32_t min_reading = 1700;
-    if (avg < min_reading) {
-        ESP_LOGI(TAG, "Touch pad #%d average reading is too low: %d (expecting at least %d). "
-               "using %d for deep sleep wakeup.\n", pad, avg, min_reading, min_reading);
-        touch_pad_config(pad, min_reading);
-    } else {
-        ESP_LOGI(TAG, "Touch pad #%d average: %d, wakeup threshold set to %d.\n", pad, avg, avg);
-        touch_pad_config(pad, min_reading);
-    }
-}
+
+// Forward declaration of the interrupt handler
+static void IRAM_ATTR gpio_isr_handler(void* arg);
 
 void AppSleepInit() {
     AppSleepDeepSleepTimerInit();
-    AppSleepTouchWakeUpInit();
+    AppSleepGPIOWakeUpInit(); // Modified to use GPIO instead of touchpad
 }
 
 void AppSleepGoToDeepSleep() {
@@ -40,9 +28,8 @@ void AppSleepRecordEnterTime() {
     gettimeofday(&sleep_enter_time, NULL); // Record current time before sleep
 }
 
-
 esp_sleep_wakeup_cause_t AppSleepWakeUpFromDeepSleep() {
-   return AppSleepGetWakeUpCause();
+    return AppSleepGetWakeUpCause();
 }
 
 void AppSleepLog() {
@@ -52,33 +39,46 @@ void AppSleepLog() {
 }
 
 esp_sleep_wakeup_cause_t AppSleepGetWakeUpCause() {
-     return esp_sleep_get_wakeup_cause();
+    return esp_sleep_get_wakeup_cause();
 }
 
 void AppSleepDeepSleepTimerInit() {
     uint32_t wakeup_time_sec;
-    wakeup_time_sec = DEEP_SLEEP_TIMER*60;
-        // If the time is within allowed hours, handle accordingly
-        // For example, you might want to delay sleep or perform some data transmission here
-        // Proceed to deep sleep
     #ifdef DEEP_SLEEP_TIMER
-        wakeup_time_sec = DEEP_SLEEP_TIMER*60;
+        wakeup_time_sec = DEEP_SLEEP_TIMER * 60;
     #else
-        wakeup_time_sec = 600;
+        wakeup_time_sec = 600; // Default to 10 minutes if DEEP_SLEEP_TIMER is not defined
     #endif
 
     ESP_LOGI(TAG, "Enabling timer wakeup, %ds\n", wakeup_time_sec);
     esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000);
 }
 
-void AppSleepTouchWakeUpInit() {
-    ESP_ERROR_CHECK(touch_pad_init());
-    touch_pad_set_fsm_mode(TOUCH_FSM_MODE_TIMER);
-    touch_pad_set_voltage(TOUCH_HVOLT_2V4, TOUCH_LVOLT_0V5, TOUCH_HVOLT_ATTEN_1V);
+void AppSleepGPIOWakeUpInit() {
+    gpio_config_t io_config;
+    io_config.intr_type = GPIO_INTR_NEGEDGE;
+    io_config.pin_bit_mask = (1ULL << GPIO_WAKEUP_PIN);
+    io_config.mode = GPIO_MODE_INPUT;
+    io_config.pull_up_en = 1;
+    gpio_config(&io_config);
 
-    touch_pad_config(TOUCH_PAD_NUM7, TOUCH_THRESH_NO_USE);
-    calibrate_touch_pad(TOUCH_PAD_NUM7);
-    esp_sleep_enable_touchpad_wakeup();
-    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
+    // Install ISR service and attach interrupt handler
+    gpio_install_isr_service(0);
+    gpio_isr_handler_add(GPIO_WAKEUP_PIN, gpio_isr_handler, (void*) GPIO_WAKEUP_PIN);
+
+    // Enable wakeup from GPIO
+    esp_sleep_enable_ext0_wakeup(GPIO_WAKEUP_PIN, 0); // 0 = LOW
 }
 
+// Interrupt Service Routine (ISR) for GPIO
+static void IRAM_ATTR gpio_isr_handler(void* arg) {
+    uint32_t gpio_num = (uint32_t) arg;
+    ESP_LOGI(TAG, "GPIO interrupt triggered on pin %d\r\n", gpio_num);
+    // Handle GPIO interrupt (e.g., wake up from sleep)
+}
+
+// If you have app_main function, ensure it's properly defined and used
+// void app_main() {
+//     AppSleepInit();
+//     // Other initializations and main loop code
+// }
