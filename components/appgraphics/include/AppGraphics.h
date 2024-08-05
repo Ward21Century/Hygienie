@@ -16,6 +16,9 @@
 
 // RST - RST_PIN
 #define RST_PIN 25
+
+#define LCD_ENABLE_PIN 13
+
 #define GRAPHICS_DELAY_MS CONFIG_GRAPHICS_DELAY_MS
 
 // Different graphic images
