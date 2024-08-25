@@ -1,16 +1,11 @@
 #include "AppGraphics.h"
+#include <inttypes.h>
 #include <rom/ets_sys.h>
 
 static const char *TAG = "AppGraphics";
 static u8g2_t u8g2;
 #define OLED_ADDR 0x78  // I2C address (0x3C << 1)
 
-static void send_command(uint8_t command) {
-    u8g2_SetI2CAddress(&u8g2.u8x8, OLED_ADDR);
-    uint8_t control = 0x00;
-    u8g2.u8x8.display_cb(&u8g2.u8x8, U8X8_MSG_BYTE_SEND, 1, &control);
-    u8g2.u8x8.display_cb(&u8g2.u8x8, U8X8_MSG_BYTE_SEND, 1, &command);
-}                       //
 
 static void configure_gpio()
 {
@@ -20,6 +15,7 @@ static void configure_gpio()
     gpio_hold_dis(RST_PIN);
     gpio_hold_dis(PIN_SCL);
     gpio_hold_dis(PIN_SDA);
+    gpio_hold_dis(LCD_ENABLE_PIN);
 
     // Disable interrupt
     io_conf.intr_type = GPIO_INTR_DISABLE;
@@ -35,8 +31,8 @@ static void configure_gpio()
     // Disable pull-up mode
     io_conf.pull_up_en = 0;
 
+    gpio_set_level(LCD_ENABLE_PIN, 1);  // Set the pin to high
 
-    gpio_set_level(LCD_ENABLE_PIN, 1); // Set the pin to high
     // Configure GPIO with the given settings
     gpio_config(&io_conf);
 
@@ -52,7 +48,9 @@ static void configure_gpio_for_sleep()
     gpio_hold_en(PIN_SCL);
 
     //Disable LCD PIn
+    //
     gpio_set_level(LCD_ENABLE_PIN, 0);
+    gpio_hold_en(LCD_ENABLE_PIN);
 
 }
 void AppGraphicsInitDisplay() {
@@ -132,7 +130,7 @@ void AppGraphicsHandleText(uint32_t text) {
 
 void AppGraphicsHandleGraphics(uint32_t text) {
     char string[20];
-    sprintf(string, "%d", text);
+    sprintf(string, "%ld", text);
     u8g2_SetFont(&u8g2, u8g2_font_logisoso16_tr);
     u8g2_DrawStr(&u8g2, string_x_coordinate, string_y_coordinate, string);
     return;

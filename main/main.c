@@ -13,13 +13,11 @@ static const char *TAG = "App Main";
 RTC_DATA_ATTR static uint8_t initialized = 0;
 
 void app_main() {
-
     esp_sleep_wakeup_cause_t wakeupCause = AppSleepGetWakeUpCause();
     if (!initialized) {
-        // Perform initialization tasks here (Wi-Fi, peripherals, etc.)
+   //     // Perform initialization tasks here (Wi-Fi, peripherals, etc.)
         initialized = 1; // Mark as initialized
-        // It's a good idea to synchronize time after initialization
-
+       // It's a good idea to synchronize time after initialization
         AppGraphicsAnimationCycle();
         AppWifiStart();
         AppMqttInitNTPAndSyncTime();
@@ -37,7 +35,7 @@ void app_main() {
             }
             break;
 
-        case ESP_SLEEP_WAKEUP_TOUCHPAD:
+         case ESP_SLEEP_WAKEUP_EXT0:
             ESP_LOGI(TAG, "Wake up from touch on pad %d\n", esp_sleep_get_touchpad_wakeup_status());
             AppMqttAddTime();
             AppGraphicsAnimationCycle();
@@ -55,9 +53,12 @@ void app_main() {
         default:
             ESP_LOGI(TAG, "ERROR with wake up cause\n");
     }
+
     AppSleepInit();
+
     AppSleepGoToDeepSleep();
 }
+
 //
 //
 //
@@ -208,11 +209,15 @@ void app_main() {
 //#include "esp_log.h"
 //#include "driver/rtc_io.h"
 //#include "AppGraphics.h"
+//#include "AppSleep.h"
+//#include "appwifi.h"
+////#include "Appmqtt.h"
 //
-//#define SLEEP_DURATION 20 // Duration in seconds
-                          //
-                          //
-                          //
+////#include <inttypes.h>
+//#define SLEEP_DURATION 60 // Duration in seconds
+//                      //
+//                      //
+//                      //
 //void configure_gpio()
 //{
 //
@@ -237,6 +242,13 @@ void app_main() {
 //
 //    // Configure GPIO with the given settings
 //    gpio_config(&io_conf);
+//    // Configure GPIO 27 as input with pull-up
+//    io_conf.intr_type = GPIO_INTR_DISABLE;      // Disable interrupt (handled by sleep wake-up)
+//    io_conf.mode = GPIO_MODE_INPUT;             // Set as input mode
+//    io_conf.pin_bit_mask = (1ULL << 27);        // Pin 27 mask
+//    io_conf.pull_down_en = 0;                   // Disable pull-down mode
+//    io_conf.pull_up_en = 1;                     // Enable pull-up mode
+//    gpio_config(&io_conf);
 //
 //}
 //                          //
@@ -249,11 +261,14 @@ void app_main() {
 //    gpio_hold_en(PIN_SDA);
 //    gpio_set_level(PIN_SCL, 1);
 //    gpio_hold_en(PIN_SCL);
+//
+//
+//    gpio_set_level(GPIO_NUM_27, 1);
+//    gpio_hold_en(GPIO_NUM_27);
 //}
 //
 //void app_main(void)
 //{
-//
 //    configure_gpio();
 //
 //    // Set the GPIO level (0 = low, 1 = high)
@@ -268,15 +283,22 @@ void app_main() {
 //    // Configure the wakeup source (timer in this case)
 //
 //    configure_gpio_for_sleep();
-//
 //    //gpio_set_level(PIN_SDA, 1);
-//    //gpio_hold_en(PIN_SDA);
 //
 //    //gpio_set_level(PIN_SCL, 1);
 //    //gpio_hold_en(PIN_SCL);
 //    esp_sleep_enable_timer_wakeup(SLEEP_DURATION * 1000000);
+//    printf("Entering deep sleep mode for %d seconds...\n", SLEEP_DURATION);
 //    // Optionally disable pull-ups/downs on all GPIOs except I2C and wakeup GPIO
 //    // Go to deep sleep
 //    //
-//    esp_deep_sleep_start();
+//    //
+//    //
+////    AppWifiStart();
+////    AppMqttInitNTPAndSyncTime();
+////    AppWifiDisconnect();
+//    AppSleepInit();
+//    AppSleepGoToDeepSleep();
 //}
+
+
