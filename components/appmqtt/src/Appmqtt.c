@@ -146,7 +146,7 @@ void AppMqttResetOfflineReadingCount(void) {
 
 uint8_t AppMqttGetNumoffLineReadingCount(void) {
     uint8_t off_line_count = sanitizer_data.offlineReadingCount;
-//    ESP_LOGI(TAG, "Offline Reading Count: %" PRIu8, off_line_count);
+    ESP_LOGI(TAG, "Offline Reading Count: %" PRIu8, off_line_count);
     return off_line_count;
 }
 

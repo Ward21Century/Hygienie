@@ -1,4 +1,4 @@
-
+#include "driver/rtc_io.h"
 #include "AppSleep.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,21 +43,24 @@ void AppSleepDeepSleepTimerInit() {
 }
 
 void AppSleepConfigureGpioForSleep(void) {
- gpio_config_t io_conf;   // Configure GPIO 13 as an output
-    io_conf.intr_type = GPIO_INTR_DISABLE;      // Disable interrupt (handled by sleep wake-up)
-    io_conf.mode = GPIO_MODE_INPUT;             // Set as input mode
-    io_conf.pin_bit_mask = (1ULL << 27);        // Pin 27 mask
-    io_conf.pull_down_en = 0;                   // Disable pull-down mode
-    io_conf.pull_up_en = 1;                     // Enable pull-up mode
+
+
+    gpio_config_t io_conf;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_INPUT;
+    io_conf.pin_bit_mask = (1ULL << 27);
+    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = 1;
     gpio_config(&io_conf);
+
 }
 
 void AppSleepTouchWakeUpInit() {
-    // Configure GPIO 27 as an external wakeup pin
+    /* Configure GPIO 27 as an external wakeup pin */
 
-    AppSleepConfigureGpioForSleep();
-    // Enable ext0 wakeup on GPIO 27, triggering on a low level (0)
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_27, 0);
+    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_ON);
+    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_ON);
 
     // Configure power domain to keep RTC peripherals on during deep sleep
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
