@@ -32,6 +32,7 @@ void app_main() {
     switch (wakeupCause) {
 
         case ESP_SLEEP_WAKEUP_TIMER:
+            ESP_LOGI(TAG, "Wake up from sleep timer.\r\n");
             AppSleepLog();
             ESP_LOGI(TAG, "Woke up from timer.");
             if (AppMqttGetNumoffLineReadingCount() > 0 ) {

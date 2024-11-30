@@ -19,4 +19,3 @@ void AppSleepDeepSleepTimerInit(void);
 void AppSleepConfigureGpioForSleep(void);
 
 void AppSleepWakeUpInit(void);
-
