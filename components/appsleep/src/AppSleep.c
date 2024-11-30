@@ -8,7 +8,7 @@ static struct timeval now;
 
 void AppSleepInit() {
     AppSleepDeepSleepTimerInit();
-    AppSleepTouchWakeUpInit();
+    AppSleepWakeUpInit();
 }
 
 void AppSleepGoToDeepSleep() {
@@ -51,7 +51,7 @@ void AppSleepConfigureGpioForSleep(void) {
 
 }
 
-void AppSleepTouchWakeUpInit() {
+void AppSleepWakeUpInit() {
     /* Configure GPIO 27 as an external wakeup pin */
 
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_27, 0);
