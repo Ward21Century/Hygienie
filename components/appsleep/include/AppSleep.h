@@ -1,11 +1,10 @@
 
 #include "AppSleepConfig.h"
+#include <inttypes.h>
 
 void AppSleepInit(void);
 
 void AppSleepGoToDeepSleep(void);
-
-void AppSleepRecordEnterTime(void);
 
 esp_sleep_wakeup_cause_t AppSleepWakeUpFromDeepSleep(void);
 
@@ -17,6 +16,6 @@ void AppMqttEraseTimeStamps(void);
 
 void AppSleepDeepSleepTimerInit(void);
 
-void AppSleepTouchWakeUpInit(void);
+void AppSleepConfigureGpioForSleep(void);
 
-void AppSleepGPIOWakeUpInit(void);
+void AppSleepWakeUpInit(void);

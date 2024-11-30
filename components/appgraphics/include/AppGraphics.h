@@ -3,6 +3,7 @@
 #include "u8g2_esp32_hal.h"
 #include "esp_log.h"
 #include <driver/gpio.h>
+#include <inttypes.h>
 #include <time.h>
 
 #include "freertos/FreeRTOS.h"
@@ -16,6 +17,9 @@
 
 // RST - RST_PIN
 #define RST_PIN 25
+
+#define LCD_ENABLE_PIN 13
+
 #define GRAPHICS_DELAY_MS CONFIG_GRAPHICS_DELAY_MS
 
 // Different graphic images
