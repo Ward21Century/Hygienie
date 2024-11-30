@@ -5,7 +5,6 @@
 
 
 static struct timeval now;
-//static const char *TAG = "Sleep";
 
 void AppSleepInit() {
     AppSleepDeepSleepTimerInit();
@@ -22,8 +21,6 @@ esp_sleep_wakeup_cause_t AppSleepWakeUpFromDeepSleep() {
 
 void AppSleepLog() {
     gettimeofday(&now, NULL);
-    // uint32_t sleep_time_ms = (now.tv_sec - sleep_enter_time.tv_sec) * 1000 + (now.tv_usec - sleep_enter_time.tv_usec) / 1000;
-    // ESP_LOGD(TAG, "Wake up from timer. Time spent in deep sleep: %dms\n", sleep_time_ms);
 }
 
 esp_sleep_wakeup_cause_t AppSleepGetWakeUpCause() {
@@ -38,7 +35,6 @@ void AppSleepDeepSleepTimerInit() {
         wakeup_time_sec = 600;
     #endif
 
-    // ESP_LOGI(TAG, "Enabling timer wakeup, %ds\n", wakeup_time_sec);
     esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000);
 }
 
@@ -62,7 +58,7 @@ void AppSleepTouchWakeUpInit() {
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_ON);
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_ON);
 
-    // Configure power domain to keep RTC peripherals on during deep sleep
+   /* Configure power domain to keep RTC peripherals on during deep sleep */
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
 }
 
