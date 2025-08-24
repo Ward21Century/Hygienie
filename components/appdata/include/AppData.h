@@ -1,3 +1,5 @@
+#ifndef APPDATA_H
+#define APPDATA_H
 #include "stdlib.h"
 #include "AppDataConfig.h"
 #include "soc/rtc.h"
@@ -22,4 +24,5 @@ struct Sanitizer_Data {
     time_t  time_stamp_seconds[15];
     struct tm readings_temp[15];
 };
+#endif
 

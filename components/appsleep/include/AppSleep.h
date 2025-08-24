@@ -1,4 +1,5 @@
-
+#ifndef APPSLEEP_H
+#define APPSLEEP_H
 #include "AppSleepConfig.h"
 #include <inttypes.h>
 
@@ -19,3 +20,4 @@ void AppSleepDeepSleepTimerInit(void);
 void AppSleepConfigureGpioForSleep(void);
 
 void AppSleepWakeUpInit(void);
+#endif

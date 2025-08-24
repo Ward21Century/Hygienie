@@ -4,8 +4,8 @@
 
 static const char *TAG = "AppGraphics";
 static u8g2_t u8g2;
-#define OLED_ADDR 0x78  // I2C address (0x3C << 1)
-
+/* I2C address (0x3C << 1) */
+#define OLED_ADDR 0x78
 
 static void configure_gpio() {
     gpio_config_t io_conf;
@@ -23,7 +23,7 @@ static void configure_gpio() {
     gpio_set_level(LCD_ENABLE_PIN, 1);
     gpio_config(&io_conf);
 }
-                          //
+
 static void configure_gpio_for_sleep()
 {
     gpio_set_level(PIN_SDA, 1);
@@ -47,6 +47,7 @@ void AppGraphicsInitDisplay() {
     u8g2_Setup_ssd1305_i2c_128x32_noname_f(&u8g2, U8G2_R0, u8g2_esp32_i2c_byte_cb, u8g2_esp32_gpio_and_delay_cb);
       ESP_LOGI(TAG, "Driver Connected");
     u8x8_SetI2CAddress(&u8g2.u8x8, OLED_ADDR);
+    /* Send init sequence to the display, display is in */
     u8g2_InitDisplay(&u8g2);  // send init sequence to the display, display is in
   return;
 }
@@ -114,12 +115,12 @@ void AppGraphicsHandleGraphics(uint32_t text) {
 }
 
 void AppGraphicsWakeUpDisplay() {
-    u8g2_SetPowerSave(&u8g2, 0);  // wake up display
+    u8g2_SetPowerSave(&u8g2, 0);
     return;
 }
 
 void AppGraphicsCloseDisplay() {
-    u8g2_SetPowerSave(&u8g2, 1); // put display to sleep
+    u8g2_SetPowerSave(&u8g2, 1);
     return;
 }
 

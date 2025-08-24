@@ -1,3 +1,5 @@
+#ifndef APPGRAPHICS_H
+#define APPGRAPHICS_H
 #include <u8g2.h>
 #include <stdlib.h>
 #include "u8g2_esp32_hal.h"
@@ -66,3 +68,4 @@ void AppGraphicsWakeUpDisplay(void);
 void AppGraphicsCloseDisplay(void);
 
 void AppGraphicsClearBuffer(void);
+#endif

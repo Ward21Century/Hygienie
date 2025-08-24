@@ -11,9 +11,10 @@
 #include "appwifi.h"
 
 static const char *TAG = "App Main";
-RTC_DATA_ATTR static uint8_t initialized = 0;
+RTC_DATA_ATTR static uint8_t initialized = 0; 
 void app_main() {
     AppSleepConfigureGpioForSleep();
+    AppSleepInit();
     esp_sleep_wakeup_cause_t wakeupCause = AppSleepGetWakeUpCause();
     ESP_LOGI(TAG, "Wake-up cause: %" PRIu32, (uint32_t)wakeupCause);
     if (!initialized) {
@@ -65,7 +66,6 @@ void app_main() {
     }
 
     ESP_LOGI(TAG, "Going to Sleep\r\n");
-    AppSleepInit();
     AppSleepGoToDeepSleep();
 }
 

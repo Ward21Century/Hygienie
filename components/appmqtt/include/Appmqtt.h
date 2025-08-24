@@ -1,3 +1,6 @@
+#ifndef APPMQTT_H
+#define APPMQTT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "AppMqttConfig.h"
@@ -18,7 +21,7 @@
 
 void AppMqttInit(void);
 
-void AppMqttDestory(void);
+void AppMqttDestroy(void);
 
 void AppMqttCreateJson(void);
 
@@ -47,3 +50,4 @@ void AppMqttAddLocalTimeToJSON(cJSON *array, struct tm timeinfo, cJSON*time);
 void AppMqttNTPinit(void);
 
 void AppMqttSyncTime(void);
+#endif

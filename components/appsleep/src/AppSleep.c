@@ -9,6 +9,8 @@
 
 #define GPIO_WAKEUP_PIN 27
 
+static const char *TAG = "AppSleep";
+
 static struct timeval now;
 
 void AppSleepInit() {
@@ -45,7 +47,6 @@ void AppSleepDeepSleepTimerInit() {
 
 void AppSleepConfigureGpioForSleep(void) {
 
-
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_INPUT;
@@ -64,4 +65,10 @@ void AppSleepWakeUpInit() {
 
    /* Configure power domain to keep RTC peripherals on during deep sleep */
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
+// Test GPIO state before sleep
+    int gpio_level = gpio_get_level(GPIO_NUM_27);
+    ESP_LOGI(TAG, "GPIO 27 level before sleep: %d (should be 1 with pull-up)", gpio_level);
+
+    // Verify wake-up is configured
+    ESP_LOGI(TAG, "About to enter deep sleep - EXT0 wake-up should be configured");
 }
