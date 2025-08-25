@@ -50,19 +50,19 @@ void AppSleepConfigureGpioForSleep(void) {
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_INPUT;
-    io_conf.pin_bit_mask = (1ULL << 27);
+    io_conf.pin_bit_mask = (1ULL << GPIO_WAKEUP_PIN);
     io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 1;
     gpio_config(&io_conf);
 
-    int gpio_level = gpio_get_level(GPIO_NUM_27);
+    int gpio_level = gpio_get_level(GPIO_WAKEUP_PIN);
     ESP_LOGI(TAG, "GPIO 27 level before sleep: %d (should be 1 with pull-up)", gpio_level);
 
 }
 
 void AppSleepWakeUpInit() {
     /* Configure GPIO 27 as an external wakeup pin */
-    esp_sleep_enable_ext0_wakeup(GPIO_NUM_27, 0);
+    esp_sleep_enable_ext0_wakeup(GPIO_WAKEUP_PIN, 0);
 
    /* Configure power domain to keep RTC peripherals on during deep sleep */
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
