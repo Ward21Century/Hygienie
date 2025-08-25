@@ -40,7 +40,7 @@ void AppSleepDeepSleepTimerInit() {
         wakeup_time_sec = DEEP_SLEEP_TIMER * 60;
     #else
      /* Default to 10 minutes if DEEP_SLEEP_TIMER is not defined */
-        wakeup_time_sec = 600; // Default to 10 minutes if DEEP_SLEEP_TIMER is not defined
+        wakeup_time_sec = 600;
     #endif
     esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000);
 }
@@ -55,19 +55,17 @@ void AppSleepConfigureGpioForSleep(void) {
     io_conf.pull_up_en = 1;
     gpio_config(&io_conf);
 
+    int gpio_level = gpio_get_level(GPIO_NUM_27);
+    ESP_LOGI(TAG, "GPIO 27 level before sleep: %d (should be 1 with pull-up)", gpio_level);
+
 }
 
 void AppSleepWakeUpInit() {
     /* Configure GPIO 27 as an external wakeup pin */
     esp_sleep_enable_ext0_wakeup(GPIO_NUM_27, 0);
-    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_ON);
-    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_ON);
 
    /* Configure power domain to keep RTC peripherals on during deep sleep */
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
-// Test GPIO state before sleep
-    int gpio_level = gpio_get_level(GPIO_NUM_27);
-    ESP_LOGI(TAG, "GPIO 27 level before sleep: %d (should be 1 with pull-up)", gpio_level);
 
     // Verify wake-up is configured
     ESP_LOGI(TAG, "About to enter deep sleep - EXT0 wake-up should be configured");
