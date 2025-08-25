@@ -1,3 +1,5 @@
+#ifndef APPWIFI_H
+#define APPWIFI_H
 #include <stdio.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -44,3 +46,4 @@ void AppWifiInit(void);
 void AppWifiDisconnect(void);
 
 void AppWifiStart(void);
+#endif

@@ -13,7 +13,6 @@
 static const char *TAG = "App Main";
 RTC_DATA_ATTR static uint8_t initialized = 0; 
 void app_main() {
-    AppSleepConfigureGpioForSleep();
     AppSleepInit();
     esp_sleep_wakeup_cause_t wakeupCause = AppSleepGetWakeUpCause();
     ESP_LOGI(TAG, "Wake-up cause: %" PRIu32, (uint32_t)wakeupCause);
@@ -22,7 +21,7 @@ void app_main() {
         ESP_LOGI(TAG, "Initialization values: %" PRIu8, initialized);
         ESP_LOGI(TAG, "System initializing...");
         /* Perform initialization tasks here (Wi-Fi, peripherals, etc.) */
-        initialized = 1; // Mark as initialized
+        initialized = 1;
        /* It's a good idea to synchronize time after initialization */
         AppGraphicsAnimationCycle();
         AppWifiStart();
@@ -36,18 +35,18 @@ void app_main() {
             ESP_LOGI(TAG, "Wake up from sleep timer.\r\n");
             AppSleepLog();
             ESP_LOGI(TAG, "Woke up from timer.");
-            if (AppMqttGetNumoffLineReadingCount() > 0 ) {
+            if (AppMqttGetNumoffLineReadingCount() > 0 ) 
+            {
                 AppWifiStart();
                 AppMqttSendData();
                 AppMqttInitNTPAndSyncTime();
                 AppWifiDisconnect();
                 ESP_LOGI(TAG, "Data sent after wake up.");
             }
-
             break;
 
          case ESP_SLEEP_WAKEUP_EXT0:
-            ESP_LOGI(TAG, "Wake up from external GPIO: %" PRIu32, (uint32_t)esp_sleep_get_touchpad_wakeup_status());
+            ESP_LOGI(TAG, "Wake up from external GPIO 27 (reed switch)");
             AppMqttAddTime();
             AppGraphicsAnimationCycle();
             if (AppMqttGetNumoffLineReadingCount() >= MAX_OFFLINE_READINGS) {
@@ -64,8 +63,9 @@ void app_main() {
         default:
             ESP_LOGI(TAG, "ERROR with wake up cause\n");
     }
-
     ESP_LOGI(TAG, "Going to Sleep\r\n");
+
+    AppSleepConfigureGpioForSleep();
     AppSleepGoToDeepSleep();
 }
 
